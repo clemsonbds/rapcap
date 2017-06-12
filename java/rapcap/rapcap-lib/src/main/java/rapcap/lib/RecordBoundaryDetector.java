@@ -1,24 +1,21 @@
 package rapcap.lib;
 
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.PriorityQueue;
 
 public class RecordBoundaryDetector {
-	private DataInputStream stream;
+	private DataInput input;
 	private RecordFormat format;
 	private byte[] bytes;
 	private int max_header_len;
 	private int max_packet_len;
 	private int bytes_read;
 
-	public void initialize(InputStream stream, RecordFormat format) {
-		if (stream instanceof DataInputStream)
-			this.stream = (DataInputStream)stream;
-		else
-			this.stream = new DataInputStream(stream);
-
+	public void initialize(DataInput input, RecordFormat format) {
+		this.input = input;
 		this.format = format;
 
 		max_header_len = format.maxRecordHeaderLen();
@@ -38,7 +35,7 @@ public class RecordBoundaryDetector {
 	public int detect() throws IOException {
 		PriorityQueue<Solution> solutions = new PriorityQueue<Solution>();
 
-		stream.readFully(bytes); // throws EOFException if not enough data
+		input.readFully(bytes); // throws EOFException if not enough data
 		bytes_read = bytes.length;
 		
 		int max_index = bytes.length - max_header_len;  // don't try to interpret less than 16 bytes as a header
@@ -102,7 +99,7 @@ public class RecordBoundaryDetector {
 			// read packet_len more bytes
 			// if there is only one solution left, we could just read enough bytes to validate that solution
 			int bytes_to_read = solutions.size() == 1 ? solutions.peek().next_index - offset + max_header_len : max_packet_len;
-			int read_len = stream.read(bytes, carry_len, bytes_to_read);
+			int read_len = input.read(bytes, carry_len, bytes_to_read);
 			bytes_read += read_len;
 			
 			len_chunk = read_len + carry_len;

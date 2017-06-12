@@ -9,6 +9,8 @@ import rapcap.lib.RecordBoundaryDetector;
 import rapcap.lib.RecordFormat;
 
 public class PcapBoundaryDetector extends RecordBoundaryDetector {
+	long snaplen;
+
 	public PcapBoundaryDetector(DataInputStream stream) throws IOException {
         PcapReader reader = new PcapReader(stream); // reads the first 24 bytes of the file, even remotely
 
@@ -25,5 +27,10 @@ public class PcapBoundaryDetector extends RecordBoundaryDetector {
 
 		RecordFormat format = new PcapRecordFormat((int)snaplen, byteorder);
 		initialize(stream, format);
+		this.snaplen = snaplen;
+	}
+
+	public long getSnaplen() {
+		return snaplen;
 	}
 }
