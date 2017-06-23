@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.PriorityQueue;
 
+@SuppressWarnings("unused")
 public class RecordBoundaryDetector {
 	private DataInput input;
 	private RecordFormat format;
@@ -99,7 +100,7 @@ public class RecordBoundaryDetector {
 			// read packet_len more bytes
 			// if there is only one solution left, we could just read enough bytes to validate that solution
 			int bytes_to_read = solutions.size() == 1 ? solutions.peek().next_index - offset + max_header_len : max_packet_len;
-			int read_len = input.read(bytes, carry_len, bytes_to_read);
+			int read_len = ((DataInputStream) input).read(bytes, carry_len, bytes_to_read);
 			bytes_read += read_len;
 			
 			len_chunk = read_len + carry_len;

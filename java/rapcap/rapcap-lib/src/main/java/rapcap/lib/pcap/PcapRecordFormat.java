@@ -20,8 +20,8 @@ public class PcapRecordFormat implements rapcap.lib.RecordFormat {
 		int orig_len = Util.readInt(bytes, offset + 12, byteOrder);
 
 //		if (orig_len > 0 && incl_len == Math.min(orig_len, snap_len))
-		if (orig_len > 0 && incl_len > 0 && incl_len <= Math.min(orig_len, snap_len))
-			return new Record(HEADER_LEN, incl_len);
+		if (orig_len > 0 && incl_len > 0 && incl_len <= Math.min(orig_len, snap_len)){
+			return new Record(HEADER_LEN, incl_len);}
 
 		return null;
 	}

@@ -30,7 +30,7 @@ public class PcapBoundaryDetector extends RecordBoundaryDetector {
 		this.snaplen = snaplen;
 	}
 
-	public long getSnaplen() {
+	/*public long getSnaplen() {
 		return snaplen;
-	}
+	}*/
 }
