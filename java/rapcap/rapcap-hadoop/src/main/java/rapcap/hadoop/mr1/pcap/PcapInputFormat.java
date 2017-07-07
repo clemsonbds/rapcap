@@ -11,8 +11,8 @@ import org.apache.hadoop.mapred.Reporter;
 
 import net.ripe.hadoop.pcap.PcapReader;
 import net.ripe.hadoop.pcap.io.reader.PcapRecordReader;
+import old.RecordBoundaryDetector;
 import rapcap.hadoop.mr1.RecordInputFormat;
-import rapcap.lib.RecordBoundaryDetector;
 import rapcap.lib.pcap.PcapBoundaryDetector;
 
 public class PcapInputFormat extends RecordInputFormat<LongWritable, ObjectWritable> {

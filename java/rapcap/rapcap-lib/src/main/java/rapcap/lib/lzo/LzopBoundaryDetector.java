@@ -1,6 +1,6 @@
 package rapcap.lib.lzo;
 
-import java.io.DataInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 import rapcap.lib.RecordBoundaryDetector;
 import rapcap.lib.RecordFormat;
 
+import com.hadoop.compression.lzo.LzopCodec;
+import com.hadoop.compression.lzo.LzopDecompressor;
 
 public class LzopBoundaryDetector extends RecordBoundaryDetector {
 	private int snaplen;
@@ -17,7 +19,7 @@ public class LzopBoundaryDetector extends RecordBoundaryDetector {
 		in.read(buf, 0, 4);
 		return ByteBuffer.wrap(buf).getInt();
 	}
-	
+/*
 	private void readHeader(InputStream in) throws IOException {
 		byte[] buf = new byte[9];
 		in.read(buf, 0, 9); // magic num
@@ -45,12 +47,21 @@ public class LzopBoundaryDetector extends RecordBoundaryDetector {
 			in.read(buf, 0, 4); // csum
 		}
 	}
-	
-	public LzopBoundaryDetector(DataInputStream stream) throws IOException {
-		readHeader(stream);
+*/	
+	public LzopBoundaryDetector(BufferedInputStream stream) throws IOException {
+		int buffer_size = LzopCodec.DEFAULT_LZO_BUFFER_SIZE;
+		LzopDecompressor decompressor = new LzopDecompressor(buffer_size);
+
+		//stream.mark(LzopRecordFormat.HEADER_LEN);
+
+		stream.mark(1000);
+
+		// this reads the header from stream, advancing the pointer
+		PublicLzopInputStream lis = new PublicLzopInputStream(stream, decompressor, buffer_size);
 		snaplen = readInt(stream);
-		RecordFormat format = new LzopRecordFormat(snaplen);
-		
+		stream.reset();
+
+		RecordFormat format = new LzopRecordFormat(snaplen, lis);
 		initialize(stream, format);
 	}
 }

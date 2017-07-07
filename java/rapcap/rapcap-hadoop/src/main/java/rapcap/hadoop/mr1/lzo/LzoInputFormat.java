@@ -9,12 +9,9 @@ import org.apache.hadoop.io.ObjectWritable;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
 
+import old.RecordBoundaryDetector;
 import rapcap.hadoop.mr1.RecordInputFormat;
-import rapcap.lib.RecordBoundaryDetector;
-import rapcap.lib.lzo.*;
-
-import com.hadoop.compression.lzo.*;
-import com.hadoop.mapreduce.*;
+import rapcap.lib.lzo.LzopBoundaryDetector;
 
 public class LzoInputFormat extends RecordInputFormat<LongWritable, ObjectWritable> {
 
@@ -27,7 +24,7 @@ public class LzoInputFormat extends RecordInputFormat<LongWritable, ObjectWritab
 	protected RecordReader<LongWritable, ObjectWritable> createRecordReader(long start, long end, Seekable baseStream, 
 			DataInputStream stream, Reporter reporter) throws IOException { //None of this works yet
 		// TODO Fill this with decompressor
-		LzoSplitRecordReader reader = new LzoSplitRecordReader();
+		
 		
 		return null;
 	}
