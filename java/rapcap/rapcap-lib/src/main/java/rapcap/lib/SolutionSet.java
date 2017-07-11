@@ -20,11 +20,12 @@ public class SolutionSet {
 		long value = minheap.pop();
 		s.last_index = (int)((value << 32) >> 32);
 		s.next_index = (int)(value >> 32);
+		System.out.println("popping " + s);
 	}
 
 	void push(Solution s) {
-		minheap.push(((long)s.next_index << 32) + s.last_index);
 		long value = ((long)s.next_index << 32) + s.last_index;
-		System.out.println("pushing last=" + s.last_index + ", s.next=" + s.next_index + ", " + value);
+		System.out.println("PUSHING " + s);
+		minheap.push(((long)s.next_index << 32) + s.last_index);
 	}
 }

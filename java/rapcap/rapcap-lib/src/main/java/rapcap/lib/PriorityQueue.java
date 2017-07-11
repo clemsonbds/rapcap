@@ -32,35 +32,37 @@ public class PriorityQueue {
 		// figure out where to insert
 		long value_shifted = (value >> 32);
 		int pos = ((int)priorityQueue.length - zero) / 2 + zero;
-		int change = 0;
 
 		if (zero == 0)
 			throw new ArrayIndexOutOfBoundsException();
+
+		int change = (priorityQueue.length - zero) / 2;
 		
-		while (true) {
+		while (change > 0) {
+			// handle equality, update without insertion
 			if ((priorityQueue[pos] >> 32) == value_shifted) {
 				// update
 				priorityQueue[pos] = value;
 				return;
 			}
 
+			// determine if we should insert at this position
+			if (pos == priorityQueue.length
+			 || ((priorityQueue[pos]   >> 32) < value_shifted
+			  && (priorityQueue[pos+1] >> 32) > value_shifted))
+				break;
 
-			if (priorityQueue[pos] > value) {
+			if (value > priorityQueue[pos]) {
 				// go right
-				change = (int)(priorityQueue.length - pos) / 2;
-				System.out.println("Going right.");
+				pos += change >> 1;
+				//(int)(priorityQueue.length - pos) / 2;
 			}
 			else {
 				// go left
-				change = 0 - (int)(pos - zero + 1) / 2;
-				System.out.println("Going left.");
+				pos = pos - change + (change>>1); //(int)(pos - zero + 1) / 2;
 			}
-			
-			if (change == 0)
-				break;
-			
-			pos += change;
-			System.out.println("I am stuck in the PQ Loop.");
+
+			change >>= 1;
 		}
 
 		// add space for new value
@@ -72,5 +74,7 @@ public class PriorityQueue {
 		
 		// insert the value
 		priorityQueue[pos] = value;
+		if (priorityQueue[pos-1] >= priorityQueue[pos] || priorityQueue[pos] >= priorityQueue[pos+1])
+			System.out.println(pos + " " + (priorityQueue.length - zero) + "\n" + (priorityQueue[pos-1]>>32) + "\n" + (priorityQueue[pos]>>32) + "\n" + (priorityQueue[pos+1]>>32));
 	}
 }

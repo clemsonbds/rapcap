@@ -10,6 +10,6 @@ public class Solution implements Comparable<Solution> {
 	}
 	
 	public String toString() {
-		return "(" + last_index + ", " + next_index + ")";
+		return "(last=" + last_index + ", next=" + next_index + ")";
 	}
 }
