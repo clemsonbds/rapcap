@@ -33,7 +33,7 @@ public class RecordBoundaryDetector {
 		// don't try to interpret less than 16 bytes as a header
 		SolutionSet solutions = new SolutionSet(max_packet_len);
 //System.out.println(solutions.minheap);
-		while (solutions.size() > 0) {
+		while (solutions.size() > 0) {   //does not check pushed values
 			solutions.pop(s);
 System.out.println("reading byte " + index + ", s = " + s);
 			// don't stop if the last remaining solution is an untested original solution
@@ -52,12 +52,12 @@ System.out.println("reading byte " + index + ", s = " + s);
 			input.mark(format.maxRecordHeaderLen());
 			format.testRecordHeader(input, record);
 			input.reset();
-			int test = input.readInt();
+			//int test = input.readInt();
 			
 			input.mark(max_packet_len); // allow interpretRecord to read the entire record
 			format.getRecordLength(input, record);
 			input.reset();
-
+			System.out.println("I am stuck in the RBD Loop.");
 			if (record.valid) {
 				s.last_index = index;
 				s.next_index = index + record.header_len + record.body_len;

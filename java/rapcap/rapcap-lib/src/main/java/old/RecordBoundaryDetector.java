@@ -47,7 +47,7 @@ public class RecordBoundaryDetector {
 		int furthest_index = 0; // optimizing, so we don't read too many bytes to validate the last remaining solution
 
 		for (int i = 0; i <= max_index; i++) {
-			format.interpretRecord(input, record);
+			format.testRecordHeader(input, record);
 			
 			if (record.valid) {
 				Solution s = new Solution();

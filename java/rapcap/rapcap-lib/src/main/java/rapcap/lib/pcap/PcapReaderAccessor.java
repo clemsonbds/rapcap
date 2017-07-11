@@ -9,8 +9,8 @@ import org.apache.commons.lang3.reflect.FieldUtils;
  */
 
 public class PcapReaderAccessor {
-	public static int getSnapLen(PcapReader reader) throws IllegalAccessException {
-		return (Integer) FieldUtils.readField(reader, "snapLen", true);
+	public static Long getSnapLen(PcapReader reader) throws IllegalAccessException {
+		return (Long) FieldUtils.readField(reader, "snapLen", true);
 	}
 
 	public static boolean isReverseHeaderByteOrder(PcapReader reader) throws IllegalAccessException {

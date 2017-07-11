@@ -1,7 +1,7 @@
 package rapcap.lib;
 
 public class SolutionSet {
-	Minheap minheap;
+	PriorityQueue minheap;
 	
 	SolutionSet(int num_values) {
 		long values[] = new long[num_values];
@@ -9,7 +9,7 @@ public class SolutionSet {
 		for (int i = 0; i < num_values; i++)
 			values[i] = ((long)i << 32) + i;
 
-		minheap = new Minheap(values);
+		minheap = new PriorityQueue(values);
 	}
 
 	int size() {
@@ -23,7 +23,7 @@ public class SolutionSet {
 	}
 
 	void push(Solution s) {
-//		minheap.push(((long)s.next_index << 32) + s.last_index);
+		minheap.push(((long)s.next_index << 32) + s.last_index);
 		long value = ((long)s.next_index << 32) + s.last_index;
 		System.out.println("pushing last=" + s.last_index + ", s.next=" + s.next_index + ", " + value);
 	}

@@ -1,5 +1,6 @@
 package rapcap.lib.pcap;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -11,8 +12,9 @@ import rapcap.lib.RecordFormat;
 public class PcapBoundaryDetector extends RecordBoundaryDetector {
 	long snaplen;
 
-	public PcapBoundaryDetector(DataInputStream stream) throws IOException {
-        PcapReader reader = new PcapReader(stream); // reads the first 24 bytes of the file, even remotely
+	public PcapBoundaryDetector(BufferedInputStream stream) throws IOException {
+        DataInputStream dstream = new DataInputStream(stream);
+		PcapReader reader = new PcapReader(dstream); // reads the first 24 bytes of the file, even remotely
 
         long snaplen;
         ByteOrder byteorder;
@@ -26,7 +28,7 @@ public class PcapBoundaryDetector extends RecordBoundaryDetector {
     	}
 
 		RecordFormat format = new PcapRecordFormat((int)snaplen, byteorder);
-		initialize(stream, format);
+		initialize((BufferedInputStream)stream, format);
 		this.snaplen = snaplen;
 	}
 

@@ -1,62 +1,66 @@
 package rapcap.lib;
 
-public class Minheap {
-	long heap[];
+public class PriorityQueue {
+	long priorityQueue[];
 	int zero = 0;
 	
-	Minheap(long values[]) {
-		heap = new long[values.length];
-		System.arraycopy(values, 0, heap, 0, values.length);
+	PriorityQueue(long values[]) {
+		priorityQueue = new long[values.length];
+		System.arraycopy(values, 0, priorityQueue, 0, values.length);
 	}
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < heap.length; i++) {
+		for (int i = 0; i < priorityQueue.length; i++) {
 			sb.append(i);
 			sb.append(" ");
-			sb.append(heap[i]);
+			sb.append(priorityQueue[i]);
 			sb.append("\n");
 		}
 		return sb.toString();
 	}
 	
 	int size() {
-		return heap.length - zero;
+		return priorityQueue.length - zero;
 	}
 	
 	long pop() {
-		return heap[zero++];
+		return priorityQueue[zero++];
 	}
 
 	void push(long value) {
 		// figure out where to insert
-		long value_shifted = value >> 32;
-		int pos = (heap.length - zero) / 2 + zero;
-		int change;
+		long value_shifted = (value >> 32);
+		int pos = ((int)priorityQueue.length - zero) / 2 + zero;
+		int change = 0;
 
 		if (zero == 0)
 			throw new ArrayIndexOutOfBoundsException();
 		
 		while (true) {
-			if ((heap[pos] >> 32) == value_shifted) {
+			if ((priorityQueue[pos] >> 32) == value_shifted) {
 				// update
-				heap[pos] = value;
+				priorityQueue[pos] = value;
 				return;
 			}
 
-			if (heap[pos] > value) {
+
+			if (priorityQueue[pos] > value) {
 				// go right
-				change = (heap.length - pos) / 2;
+				change = (int)(priorityQueue.length - pos) / 2;
+				System.out.println("Going right.");
 			}
 			else {
 				// go left
-				change = 0 - (pos - zero + 1) / 2;
+				change = 0 - (int)(pos - zero + 1) / 2;
+				System.out.println("Going left.");
 			}
 			
 			if (change == 0)
 				break;
 			
 			pos += change;
+			System.out.println("I am stuck in the PQ Loop.");
 		}
 
 		// add space for new value
@@ -64,9 +68,9 @@ public class Minheap {
 
 		// shift values before pos left by 1
 		for (int i = zero; i < pos; i++)
-			heap[i] = heap[i+1];
+			priorityQueue[i] = priorityQueue[i+1];
 		
 		// insert the value
-		heap[pos] = value;
+		priorityQueue[pos] = value;
 	}
 }
