@@ -30,13 +30,21 @@ public class RecordBoundaryDetector {
 		Solution s = new Solution();
 		Record record = new Record();
 		
+		Solution real = new Solution(0);
+		
 		// don't try to interpret less than 16 bytes as a header
 		SolutionSet solutions = new SolutionSet(max_packet_len);
 //System.out.println(solutions.minheap);
 		while (solutions.size() > 0) {   //does not check pushed values
 
 			solutions.pop(s);
-//System.out.println("reading byte " + index + ", s = " + s);
+
+			if (s.last_index == real.next_index) {
+//				System.out.println("found real solution " + s);
+				real.next_index = s.next_index;
+			}
+			
+			//System.out.println("reading byte " + index + ", s = " + s);
 			// don't stop if the last remaining solution is an untested original solution
 			if (solutions.size() == 0 && s.next_index != s.last_index)
 				break;
@@ -44,7 +52,9 @@ public class RecordBoundaryDetector {
 			// here we need to check error conditions such as number of bytes skipped or available() to see if
 			// we will run out of data before validating all solutions, resulting in parallel solutions
 			
-			input.skip(s.next_index - index);
+			for (long to_skip = s.next_index - index; to_skip > 0; )
+				to_skip -= input.skip(to_skip);
+
 			index = s.next_index;
 
 			// LZOP needs to decompress the block starting with the header, so we do two mark/resets:
@@ -63,6 +73,7 @@ public class RecordBoundaryDetector {
 				s.last_index = index;
 				s.next_index = index + record.header_len + record.body_len;
 				solutions.push(s);
+//				System.out.println("# solutions: " + solutions.size());
 			}
 			else if (solutions.size() == 0)
 				throw new IOException("no solutions");

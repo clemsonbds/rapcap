@@ -29,40 +29,35 @@ public class PriorityQueue {
 	}
 
 	void push(long value) {
-		// figure out where to insert
-		long value_shifted = (value >> 32);
-		int pos = ((int)priorityQueue.length - zero) / 2 + zero;
-
 		if (zero == 0)
 			throw new ArrayIndexOutOfBoundsException();
 
-		int change = (priorityQueue.length - zero) / 2;
-		
-		while (change > 0) {
+		int min = zero;
+		int max = priorityQueue.length - 1;
+		int pos = 0;
 
+		long value_shifted = (value >> 32);
 
-			// determine if we should insert at this position
-			if (pos == (priorityQueue.length - 1)
-				|| ((priorityQueue[pos]   >> 32) < value_shifted
-						&& (priorityQueue[pos+1] >> 32) > value_shifted))
-				break;
-
-			if (value > priorityQueue[pos]) {
-				// go right
-				pos = pos + change - (change >> 1);
-				//(int)(priorityQueue.length - pos) / 2;
-			}
-			else {
-				// go left
-				pos = pos - change + (change >> 1); //(int)(pos - zero + 1) / 2;
-			}
-
-			change >>= 1;
+		while (true) {
+			pos = (max + min) / 2;
+			
 			// handle equality, update without insertion
 			if ((priorityQueue[pos] >> 32) == value_shifted) {
 				// update
 				priorityQueue[pos] = value;
 				return;
+			}
+
+			if (max < min) // insert here
+				break;
+			
+			if (value > priorityQueue[pos]) {
+				// go right
+				min = pos + 1;
+			}
+			else {
+				// go left
+				max = pos - 1;
 			}
 		}
 
@@ -75,9 +70,31 @@ public class PriorityQueue {
 		
 		// insert the value
 		priorityQueue[pos] = value;
-//		if (priorityQueue[pos-1] >= priorityQueue[pos] || priorityQueue[pos] >= priorityQueue[pos+1])
-//			System.out.println(pos + " " + (priorityQueue.length - zero) + "\n" + (priorityQueue[pos-1]>>32) + "\n" + (priorityQueue[pos]>>32) + "\n" + (priorityQueue[pos+1]>>32));
-//		if ((priorityQueue[pos] >> 32) == (priorityQueue[pos+1 >> 32]) || (priorityQueue[pos] >> 32) == (priorityQueue[pos-1] >> 32))
-//			System.out.println("Duplicate entries found.");
+
+		boolean ooo = false;
+		boolean dup = false;
+		
+		if (pos > zero) {
+			if (priorityQueue[pos-1] > priorityQueue[pos])
+				ooo = true;
+			if (priorityQueue[pos-1] == priorityQueue[pos])
+				dup = true;
+		}
+		if (pos < priorityQueue.length-1) {
+			if (priorityQueue[pos] > priorityQueue[pos+1])
+				ooo = true;
+			if (priorityQueue[pos] == priorityQueue[pos+1])
+				dup = true;
+		}
+
+		if (dup)
+			System.out.println("duplicates");
+		if (ooo)
+			System.out.println("out of order");
+		if (dup || ooo)
+			System.out.println(
+				((pos > zero) ? (new Solution(priorityQueue[pos-1]) + "\n") : "") +
+				new Solution(priorityQueue[pos]) +
+				((pos < priorityQueue.length-1) ? ("\n" + new Solution(priorityQueue[pos+1])) : ""));
 	}
 }
