@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import org.apache.commons.io.input.CountingInputStream;
+
 import rapcap.lib.RecordBoundaryDetector;
 import rapcap.lib.RecordFormat;
 
@@ -57,11 +59,12 @@ public class LzopBoundaryDetector extends RecordBoundaryDetector {
 		stream.mark(1000);
 
 		// this reads the header from stream, advancing the pointer
-		PublicLzopInputStream lis = new PublicLzopInputStream(stream, decompressor, buffer_size);
+		CountingInputStream counting_stream = new CountingInputStream(stream);
+		PublicLzopInputStream lis = new PublicLzopInputStream(counting_stream, decompressor, buffer_size);
 		snaplen = readInt(stream);
 		stream.reset();
 
-		RecordFormat format = new LzopRecordFormat(snaplen, lis);
+		RecordFormat format = new LzopRecordFormat(snaplen, lis, counting_stream);
 		initialize(stream, format);
 	}
 }

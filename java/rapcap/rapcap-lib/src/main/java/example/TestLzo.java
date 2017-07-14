@@ -19,7 +19,8 @@ System.out.println(is.available());
 		RecordBoundaryDetector detector = new LzopBoundaryDetector(bis);
 System.out.println(is.available());
 
-		detector.detect();
+		int index = detector.detect();
+		System.out.println("Found solution at "+index);
 		raf.close();
 	}
 

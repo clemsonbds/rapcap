@@ -24,8 +24,7 @@ public class SolutionSet {
 	}
 
 	void push(Solution s) {
-//		long value = ((long)s.next_index << 32) + s.last_index;
-//		System.out.println("PUSHING " + s);
+		System.out.println("PUSHING " + s);
 		minheap.push(((long)s.next_index << 32) + s.last_index);
 	}
 }

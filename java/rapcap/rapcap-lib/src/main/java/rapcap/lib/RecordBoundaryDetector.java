@@ -44,7 +44,7 @@ public class RecordBoundaryDetector {
 				real.next_index = s.next_index;
 			}
 			
-			//System.out.println("reading byte " + index + ", s = " + s);
+//			System.out.println("reading byte " + index + ", s = " + s);
 			// don't stop if the last remaining solution is an untested original solution
 			if (solutions.size() == 0 && s.next_index != s.last_index)
 				break;
@@ -72,8 +72,9 @@ public class RecordBoundaryDetector {
 			if (record.valid) {
 				s.last_index = index;
 				s.next_index = index + record.header_len + record.body_len;
+				System.out.printf("index %d, ", index);
 				solutions.push(s);
-//				System.out.println("# solutions: " + solutions.size());
+				System.out.println("# solutions: " + solutions.size());
 			}
 			else if (solutions.size() == 0)
 				throw new IOException("no solutions");
