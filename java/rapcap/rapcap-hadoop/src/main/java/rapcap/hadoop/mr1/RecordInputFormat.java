@@ -16,7 +16,7 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
 
-import old.RecordBoundaryDetector;
+import rapcap.lib.RecordBoundaryDetector;
 
 public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
 

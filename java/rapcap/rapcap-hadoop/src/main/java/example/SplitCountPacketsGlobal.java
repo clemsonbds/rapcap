@@ -18,13 +18,13 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import net.ripe.hadoop.pcap.io.PcapInputFormat;
-import net.ripe.hadoop.pcap.io.SplitLocalPcapInputFormat;
-import net.ripe.hadoop.pcap.io.SplitGlobalPcapInputFormat;
 
+import rapcap.hadoop.mr1.RecordInputFormat;
 //import net.ripe.hadoop.pcap.io.PcapInputFormat;
 
 public class SplitCountPacketsGlobal extends Configured implements Tool {
-
+	
+	
 	public static class PacketCountMapper extends Mapper<LongWritable, ObjectWritable, Text, IntWritable> {
 
 		private final static IntWritable one = new IntWritable(1);
@@ -55,10 +55,9 @@ public class SplitCountPacketsGlobal extends Configured implements Tool {
         System.exit(res);
 	}
 
-	@Override
 	public int run(String[] args) throws Exception {
 		Job job = Job.getInstance(this.getConf(), "packet count");
-		job.setInputFormatClass(SplitGlobalPcapInputFormat.class);
+		job.setInputFormatClass(RecordInputFormat.class);
 		job.setJarByClass(SplitCountPacketsGlobal.class);
 		job.setMapperClass(PacketCountMapper.class);
 		job.setCombinerClass(PacketCountReducer.class);

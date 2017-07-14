@@ -1,5 +1,6 @@
 package rapcap.hadoop.mr1.pcap;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -11,7 +12,7 @@ import org.apache.hadoop.mapred.Reporter;
 
 import net.ripe.hadoop.pcap.PcapReader;
 import net.ripe.hadoop.pcap.io.reader.PcapRecordReader;
-import old.RecordBoundaryDetector;
+import rapcap.lib.RecordBoundaryDetector;
 import rapcap.hadoop.mr1.RecordInputFormat;
 import rapcap.lib.pcap.PcapBoundaryDetector;
 
@@ -19,7 +20,7 @@ public class PcapInputFormat extends RecordInputFormat<LongWritable, ObjectWrita
 
 	@Override
 	protected RecordBoundaryDetector createBoundaryDetector(DataInputStream stream) throws IOException {
-		return new PcapBoundaryDetector(stream);
+		return new PcapBoundaryDetector(new BufferedInputStream(stream));
 	}
 
 	@Override

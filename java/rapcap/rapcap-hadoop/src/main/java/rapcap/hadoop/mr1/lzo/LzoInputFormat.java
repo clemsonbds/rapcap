@@ -1,5 +1,6 @@
 package rapcap.hadoop.mr1.lzo;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -9,7 +10,7 @@ import org.apache.hadoop.io.ObjectWritable;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
 
-import old.RecordBoundaryDetector;
+import rapcap.lib.RecordBoundaryDetector;
 import rapcap.hadoop.mr1.RecordInputFormat;
 import rapcap.lib.lzo.LzopBoundaryDetector;
 
@@ -17,7 +18,7 @@ public class LzoInputFormat extends RecordInputFormat<LongWritable, ObjectWritab
 
 	@Override
 	protected RecordBoundaryDetector createBoundaryDetector(DataInputStream stream) throws IOException {
-		return new LzopBoundaryDetector(stream);
+		return new LzopBoundaryDetector(new BufferedInputStream(stream));
 	}
 
 	@Override
