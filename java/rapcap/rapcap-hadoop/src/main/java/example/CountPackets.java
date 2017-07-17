@@ -3,6 +3,8 @@ package example;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -17,14 +19,15 @@ import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
-import org.apache.hadoop.mapred.TextOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 
 import rapcap.hadoop.mr1.pcap.PcapInputFormat;
 
 
 //import net.ripe.hadoop.pcap.io.PcapInputFormat;
 
-public class CountPackets {
+public class CountPackets extends Configured implements Tool {
 
 	public static class PacketCountMapper extends MapReduceBase implements Mapper<LongWritable, ObjectWritable, Text, IntWritable> {
 
@@ -52,21 +55,29 @@ public class CountPackets {
 	}
 
 	public static void main(String[] args) throws Exception {
-		JobConf conf = new JobConf(CountPackets.class);
-		conf.setJobName("count packets");
+        int res = ToolRunner.run(new Configuration(), new CountPackets(), args);
+        System.exit(res);
+	}
+
+	public int run(String[] args) throws Exception {
+        JobConf job = (JobConf)this.getConf();
+
+		FileInputFormat.addInputPath(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+		job.setJobName("packet count");
+
+		job.setJarByClass(CountPackets.class);
+		job.setMapperClass(PacketCountMapper.class);
+		job.setCombinerClass(PacketCountReducer.class);
+		job.setReducerClass(PacketCountReducer.class);
 		
-		conf.setOutputKeyClass(Text.class);
-		conf.setOutputValueClass(IntWritable.class);
-		
-		conf.setMapperClass(PacketCountMapper.class);
-		conf.setCombinerClass(PacketCountReducer.class);
-		conf.setReducerClass(PacketCountReducer.class);
-		
-		conf.setInputFormat(PcapInputFormat.class);
-		conf.setOutputFormat(TextOutputFormat.class);
-		
-		FileInputFormat.setInputPaths(conf, new Path(args[0]));
-		FileOutputFormat.setOutputPath(conf, new Path(args[1]));
-		JobClient.runJob(conf);
+		job.setInputFormat(PcapInputFormat.class);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
+
+		job.setNumReduceTasks(1);
+		JobClient.runJob(job);
+		return 0;
 	}
 }
