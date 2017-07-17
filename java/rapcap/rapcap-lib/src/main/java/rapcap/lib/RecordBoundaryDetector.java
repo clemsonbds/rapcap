@@ -72,9 +72,9 @@ public class RecordBoundaryDetector {
 			if (record.valid) {
 				s.last_index = index;
 				s.next_index = index + record.header_len + record.body_len;
-				System.out.printf("index %d, ", index);
+//				System.out.printf("index %d, ", index);
 				solutions.push(s);
-				System.out.println("# solutions: " + solutions.size());
+//				System.out.println("# solutions: " + solutions.size());
 			}
 			else if (solutions.size() == 0)
 				throw new IOException("no solutions");
