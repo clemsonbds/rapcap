@@ -74,6 +74,8 @@ public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
 	
 	@Override
     protected boolean isSplitable(FileSystem fs, Path filename) {
-		return compressionCodecs.getCodec(filename) == null;
+		CompressionCodecFactory factory = new CompressionCodecFactory(fs.getConf());
+		return factory.getCodec(filename) == null;
+//		return compressionCodecs.getCodec(filename) == null;
     }
 }
