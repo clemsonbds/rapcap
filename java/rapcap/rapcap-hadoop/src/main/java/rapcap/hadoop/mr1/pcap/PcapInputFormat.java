@@ -26,7 +26,9 @@ public class PcapInputFormat extends RecordInputFormat<LongWritable, ObjectWrita
 	@Override
 	protected RecordReader<LongWritable, ObjectWritable> createRecordReader(long start, long end, Seekable baseStream,
 			DataInputStream stream, Reporter reporter) throws IOException {
+		baseStream.seek(0);
         PcapReader reader = new PcapReader(stream); // reads the first 24 bytes of the file, even remotely
+        baseStream.seek(start);
         return new PcapRecordReader(reader, start, end, baseStream, stream, reporter);
 	}
 
