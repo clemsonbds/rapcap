@@ -45,7 +45,9 @@ public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
         FSDataInputStream baseStream = path.getFileSystem(conf).open(path);
         DataInputStream stream = baseStream;
 
-        final CompressionCodec codec = compressionCodecs.getCodec(path);
+		CompressionCodecFactory factory = new CompressionCodecFactory(conf);
+        final CompressionCodec codec = factory.getCodec(path);
+
         if (codec != null) {
             stream = new DataInputStream(codec.createInputStream(stream));
         }
