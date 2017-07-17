@@ -21,7 +21,7 @@ import net.ripe.hadoop.pcap.io.PcapInputFormat;
 
 import rapcap.hadoop.mr1.RecordInputFormat;
 //import net.ripe.hadoop.pcap.io.PcapInputFormat;
-
+/*
 public class SplitCountPacketsGlobal extends Configured implements Tool {
 	
 	
@@ -57,7 +57,7 @@ public class SplitCountPacketsGlobal extends Configured implements Tool {
 
 	public int run(String[] args) throws Exception {
 		Job job = Job.getInstance(this.getConf(), "packet count");
-		job.setInputFormatClass(RecordInputFormat.class);
+		job.setInputFormatClass(PcapInputFormat.class);
 		job.setJarByClass(SplitCountPacketsGlobal.class);
 		job.setMapperClass(PacketCountMapper.class);
 		job.setCombinerClass(PacketCountReducer.class);
@@ -70,3 +70,4 @@ public class SplitCountPacketsGlobal extends Configured implements Tool {
 		return job.waitForCompletion(true) ? 0 : 1;
 	}
 }
+*/
