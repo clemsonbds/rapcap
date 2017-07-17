@@ -55,12 +55,12 @@ public class CountPackets extends Configured implements Tool {
 	}
 
 	public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new CountPackets(), args);
+        int res = ToolRunner.run(new JobConf(), new CountPackets(), args);
         System.exit(res);
 	}
 
 	public int run(String[] args) throws Exception {
-        JobConf job = (JobConf)this.getConf();
+		JobConf job = (JobConf)this.getConf();
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
