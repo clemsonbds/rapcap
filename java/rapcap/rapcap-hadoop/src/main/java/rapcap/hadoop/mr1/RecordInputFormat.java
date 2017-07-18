@@ -26,11 +26,6 @@ public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
 	protected abstract RecordBoundaryDetector createBoundaryDetector(DataInputStream stream) throws IOException;
 	protected abstract RecordReader<K, V> createRecordReader(long start, long end, Seekable baseStream, DataInputStream stream, Reporter reporter) throws IOException;
 
-    // Override for file types with a global header, such as PCAP
-    protected long getFileStartOffset() {
-    	return 0;
-    }
-
     public void configure(JobConf conf) {
     	compressionCodecs = new CompressionCodecFactory(conf);
     }
@@ -52,11 +47,16 @@ System.out.printf("rapcap: computing for split (%d,%d]\n", first_byte, last_byte
             stream = new DataInputStream(codec.createInputStream(stream));
         }
         else {
+        	baseStream.seek(0);
         	RecordBoundaryDetector boundaryDetector = createBoundaryDetector(stream);
-	
-    		// determine first unambiguous header index for split
-	        baseStream.seek(first_byte);
-	        first_byte += boundaryDetector.detect();
+
+        	if (first_byte == 0)
+        		first_byte = boundaryDetector.getRecordStartOffset();
+        	else {
+            	// determine first unambiguous header index for split
+    	        baseStream.seek(first_byte);
+    	        first_byte += boundaryDetector.detect();
+        	}
 
         	// is this the last split?
         	if (last_byte != path.getFileSystem(conf).getFileStatus(path).getLen() - 1) {
@@ -65,10 +65,6 @@ System.out.printf("rapcap: computing for split (%d,%d]\n", first_byte, last_byte
         		last_byte += boundaryDetector.detect() - 1;
         	}
 System.out.printf("rapcap: adjusted indices to (%d, %d]\n", first_byte, last_byte);
-        }
-
-        if (first_byte == 0) {
-        	first_byte = getFileStartOffset();
         }
 
         baseStream.seek(first_byte);

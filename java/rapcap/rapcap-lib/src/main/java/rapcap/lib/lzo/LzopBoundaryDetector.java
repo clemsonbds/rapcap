@@ -15,6 +15,7 @@ import com.hadoop.compression.lzo.LzopDecompressor;
 
 public class LzopBoundaryDetector extends RecordBoundaryDetector {
 	private int snaplen;
+	private long globalHeaderLength;
 
 	private int readInt(InputStream in) throws IOException {
 		byte[] buf = new byte[4];
@@ -61,10 +62,16 @@ public class LzopBoundaryDetector extends RecordBoundaryDetector {
 		// this reads the header from stream, advancing the pointer
 		CountingInputStream counting_stream = new CountingInputStream(stream);
 		PublicLzopInputStream lis = new PublicLzopInputStream(counting_stream, decompressor, buffer_size);
-		snaplen = readInt(stream);
+		this.globalHeaderLength = counting_stream.getCount();
+		this.snaplen = readInt(stream);
 		stream.reset();
 
 		RecordFormat format = new LzopRecordFormat(snaplen, lis, counting_stream);
 		initialize(stream, format);
+	}
+
+	@Override
+	public long getRecordStartOffset() {
+		return globalHeaderLength;
 	}
 }

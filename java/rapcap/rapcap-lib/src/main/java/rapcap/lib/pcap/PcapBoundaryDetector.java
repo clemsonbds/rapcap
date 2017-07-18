@@ -28,4 +28,9 @@ public class PcapBoundaryDetector extends RecordBoundaryDetector {
 		RecordFormat format = new PcapRecordFormat((int)snaplen, byteorder);
 		initialize((BufferedInputStream)stream, format);
 	}
+
+	@Override
+	public long getRecordStartOffset() {
+		return 24;
+	}
 }

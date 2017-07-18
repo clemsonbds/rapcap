@@ -8,11 +8,13 @@ import java.io.InputStream;
 import java.util.PriorityQueue;
 
 @SuppressWarnings("unused")
-public class RecordBoundaryDetector {
+public abstract class RecordBoundaryDetector {
 	private DataInputStream input;
 	private RecordFormat format;
 	private int max_packet_len;
 
+	public abstract long getRecordStartOffset();
+	
 	public void initialize(BufferedInputStream input, RecordFormat format) {
 		this.input = new DataInputStream(input);
 		this.format = format;
