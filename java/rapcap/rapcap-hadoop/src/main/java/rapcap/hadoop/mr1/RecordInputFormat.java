@@ -35,8 +35,8 @@ public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
 
         Path path = fileSplit.getPath();
         long first_byte = fileSplit.getStart();
-        long last_byte = first_byte + fileSplit.getLength() - 1;
-System.out.printf("rapcap: computing for split (%d,%d]\n", first_byte, last_byte);
+        long next_first_byte = first_byte + fileSplit.getLength();
+System.out.printf("rapcap: computing for split (%d,%d)\n", first_byte, next_first_byte);
         FSDataInputStream baseStream = path.getFileSystem(conf).open(path);
         DataInputStream stream = baseStream;
 
@@ -59,16 +59,16 @@ System.out.printf("rapcap: computing for split (%d,%d]\n", first_byte, last_byte
         	}
 
         	// is this the last split?
-        	if (last_byte != path.getFileSystem(conf).getFileStatus(path).getLen() - 1) {
+        	if (next_first_byte != path.getFileSystem(conf).getFileStatus(path).getLen()) {
         		// determine first unambiguous header index for NEXT split, remote read until that
-        		baseStream.seek(last_byte + 1);
-        		last_byte += boundaryDetector.detect() - 1;
+        		baseStream.seek(next_first_byte);
+        		next_first_byte += boundaryDetector.detect();
         	}
-System.out.printf("rapcap: adjusted indices to (%d, %d]\n", first_byte, last_byte);
+System.out.printf("rapcap: adjusted indices to (%d, %d)\n", first_byte, next_first_byte);
         }
 
         baseStream.seek(first_byte);
-        return createRecordReader(first_byte, last_byte, baseStream, stream, reporter);
+        return createRecordReader(first_byte, next_first_byte-1, baseStream, stream, reporter);
 	}
 	
 	@Override
