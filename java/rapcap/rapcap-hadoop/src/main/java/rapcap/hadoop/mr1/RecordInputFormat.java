@@ -41,7 +41,7 @@ public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
         Path path = fileSplit.getPath();
         long first_byte = fileSplit.getStart();
         long last_byte = first_byte + fileSplit.getLength() - 1;
-System.out.printf("computing for split (%d,%d]\n", first_byte, last_byte);
+System.out.printf("rapcap: computing for split (%d,%d]\n", first_byte, last_byte);
         FSDataInputStream baseStream = path.getFileSystem(conf).open(path);
         DataInputStream stream = baseStream;
 
@@ -64,7 +64,7 @@ System.out.printf("computing for split (%d,%d]\n", first_byte, last_byte);
         		baseStream.seek(last_byte + 1);
         		last_byte += boundaryDetector.detect() - 1;
         	}
-System.out.printf("adjusted indices to (%d, %d]\n", first_byte, last_byte);
+System.out.printf("rapcap: adjusted indices to (%d, %d]\n", first_byte, last_byte);
         }
 
         if (first_byte == 0) {
