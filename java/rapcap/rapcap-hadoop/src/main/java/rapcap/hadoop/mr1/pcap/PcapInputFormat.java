@@ -29,7 +29,7 @@ public class PcapInputFormat extends RecordInputFormat<LongWritable, ObjectWrita
 		baseStream.seek(0);
         PcapReader reader = new PcapReader(stream); // reads the first 24 bytes of the file, even remotely
         baseStream.seek(start);
-        return new PcapRecordReader(reader, start, end, baseStream, stream, reporter);
+        return new rapcap.hadoop.mr1.pcap.PcapRecordReader(reader, start, end, baseStream, stream, reporter);
 	}
 
 
