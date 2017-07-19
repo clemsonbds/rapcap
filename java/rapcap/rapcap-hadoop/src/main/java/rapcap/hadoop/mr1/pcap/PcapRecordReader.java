@@ -32,8 +32,10 @@ public class PcapRecordReader extends net.ripe.hadoop.pcap.io.reader.PcapRecordR
 		if (pos >= next_start)
 			return false;
 
-		System.out.printf("rapcap: reader %d reading header at position %d in range (%d,%d)\n",
-				ID, pos, tstart, next_start);
-		return super.next(key, value);
+		boolean ret = super.next(key, value);
+		
+		System.out.printf("rapcap: reader %d reading header at position %d in range (%d,%d), returning %s\n",
+				ID, pos, tstart, next_start, ret);
+		return ret;
 	}
 }
