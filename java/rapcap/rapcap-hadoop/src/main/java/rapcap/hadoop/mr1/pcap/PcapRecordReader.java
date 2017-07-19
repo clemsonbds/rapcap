@@ -15,10 +15,12 @@ public class PcapRecordReader extends net.ripe.hadoop.pcap.io.reader.PcapRecordR
 
 	private int ID;
 	private long next_start;
+	private long tstart;
 
 	public PcapRecordReader(PcapReader pcapReader, long start, long end, Seekable baseStream, DataInputStream stream,
 			Reporter reporter) throws IOException {
 		super(pcapReader, start, end, baseStream, stream, reporter);
+		this.tstart = start;
 		this.next_start = end;
 		ID = new Random().nextInt(99);
 	}
@@ -30,7 +32,8 @@ public class PcapRecordReader extends net.ripe.hadoop.pcap.io.reader.PcapRecordR
 		if (pos >= next_start)
 			return false;
 
-		System.out.println("rapcap: reader " + ID + " reading header at position " + getPos());
+		System.out.printf("rapcap: reader %d reading header at position %d in range (%d,%d)\n",
+				ID, pos, tstart, next_start);
 		return super.next(key, value);
 	}
 }
