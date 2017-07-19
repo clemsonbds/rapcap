@@ -29,13 +29,15 @@ public class PcapRecordReader extends net.ripe.hadoop.pcap.io.reader.PcapRecordR
 	public boolean next(LongWritable key, ObjectWritable value) throws IOException {
 		long pos = getPos();
 		
+		System.out.printf("rapcap: reader %d at position %d in range (%d,%d)\n", ID, pos, tstart, next_start);
+		
 		if (pos >= next_start)
 			return false;
 
 		boolean ret = super.next(key, value);
 		
-		System.out.printf("rapcap: reader %d reading header at position %d in range (%d,%d), returning %s\n",
-				ID, pos, tstart, next_start, ret);
+		System.out.printf("rapcap: reader %d at position %d returning %s\n",
+				ID, pos, ret);
 		return ret;
 	}
 }
