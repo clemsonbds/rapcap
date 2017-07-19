@@ -14,17 +14,23 @@ import net.ripe.hadoop.pcap.PcapReader;
 public class PcapRecordReader extends net.ripe.hadoop.pcap.io.reader.PcapRecordReader {
 
 	private int ID;
+	private long next_start;
 
 	public PcapRecordReader(PcapReader pcapReader, long start, long end, Seekable baseStream, DataInputStream stream,
 			Reporter reporter) throws IOException {
 		super(pcapReader, start, end, baseStream, stream, reporter);
+		this.next_start = end;
 		ID = new Random().nextInt(99);
 	}
 
 	@Override
 	public boolean next(LongWritable key, ObjectWritable value) throws IOException {
+		long pos = getPos();
+		
+		if (pos >= next_start)
+			return false;
+
 		System.out.println("rapcap: reader " + ID + " reading header at position " + getPos());
 		return super.next(key, value);
 	}
-
 }
