@@ -24,9 +24,6 @@ public class LzoInputFormat extends RecordInputFormat<LongWritable, ObjectWritab
 	@Override
 	protected RecordReader<LongWritable, ObjectWritable> createRecordReader(long start, long end, Seekable baseStream, 
 			DataInputStream stream, Reporter reporter) throws IOException { //None of this works yet
-		// TODO Fill this with decompressor
-		
-		
-		return null;
+		return new LzopRecordReader(start, end, baseStream, stream, reporter);
 	}
 }

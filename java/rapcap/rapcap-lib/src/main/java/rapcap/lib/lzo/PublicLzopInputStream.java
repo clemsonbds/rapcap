@@ -3,6 +3,7 @@ package rapcap.lib.lzo;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.hadoop.fs.Seekable;
 import org.apache.hadoop.io.compress.Decompressor;
 
 import com.hadoop.compression.lzo.LzopInputStream;
@@ -10,9 +11,10 @@ import com.hadoop.compression.lzo.LzopInputStream;
 // wrapper class for LzopInputStream because decompress is protected.
 
 public class PublicLzopInputStream extends LzopInputStream {
-
+	public Decompressor decompressor;
 	public PublicLzopInputStream(InputStream in, Decompressor decompressor, int bufferSize) throws IOException {
 		super(in, decompressor, bufferSize);
+		this.decompressor = decompressor;
 	}
 
 	@Override
