@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
+import rapcap.lib.RecordBoundaryDetector;
 import rapcap.lib.Util;
 import rapcap.lib.pcap.PcapBoundaryDetector;
 
@@ -15,33 +16,29 @@ public class FindFirstAfter {
 		
 		FileInputStream fis = new FileInputStream(args[0]);
 		BufferedInputStream bis = new BufferedInputStream(fis);
-		System.out.println(bis.available());
-		PcapBoundaryDetector detector = new PcapBoundaryDetector(bis);
+//		DataInputStream dis = new DataInputStream(bis);
+		int to_find = new Integer(args[1]);
 
-		ByteOrder byteOrder = detector.byteorder;
-		long snap_len = detector.snaplen;
-		
-		System.out.printf("File has snap_len=%d, %s byte order\n", snap_len, byteOrder);
-		
-		System.out.println(bis.available());
-		int solution = detector.detect();
-		System.out.println("The Solution is index 24 + " + solution);
+		bis.mark(24);
+		RecordBoundaryDetector detector = new PcapBoundaryDetector(bis);
+		bis.reset();
 
-		bis.close();
-		
-		fis = new FileInputStream(args[0]);
-		DataInputStream dis = new DataInputStream(new BufferedInputStream(fis));
-		byte byte_buf[] = new byte[16];
-		int ts_sec, ts_usec, incl_len, orig_len;
-
-		long to_skip = 24;
+		long to_skip = to_find;
 		while (to_skip > 0) {
-			long skipped = dis.skip(to_skip);
+			long skipped = bis.skip(to_skip);
 			to_skip -= skipped;
 		}
 
-		dis.mark(solution*3);
+		int index = detector.detect();
+		System.out.printf("Started from index %d, found header at %d\n", to_find, to_find + index);
+
 		
+		
+		/*		dis.mark(solution*3);
+
+		byte byte_buf[] = new byte[16];
+		int ts_sec, ts_usec, incl_len, orig_len;
+
 		for (int i = 0; i < solution*2; ) {
 			dis.readFully(byte_buf);
 		
@@ -81,6 +78,7 @@ public class FindFirstAfter {
 				ts_sec, ts_usec, incl_len, orig_len);
 		
 		dis.close();
+*/
 	}
 
 }

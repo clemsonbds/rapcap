@@ -55,7 +55,11 @@ System.out.printf("rapcap: computing for split (%d,%d)\n", first_byte, next_firs
         	else {
             	// determine first unambiguous header index for split
     	        baseStream.seek(first_byte);
-    	        first_byte += boundaryDetector.detect();
+    	        long offset = boundaryDetector.detect();
+System.out.printf("rapcap: adjusted first boundary (at %d) by %d bytes from %d to %d\n", baseStream.getPos(), offset, first_byte, first_byte + offset);
+				first_byte += offset;
+				//   	        first_byte += boundaryDetector.detect();
+
         	}
 
         	// is this the last split?
