@@ -50,7 +50,7 @@ public class ParallelDecompress extends Configured implements Tool{
 		private byte bytebuff[] = new byte[(256*1024)];
 		private ObjectWritable outputbuff = new ObjectWritable(bytebuff);
 		
-		private InputStream istream = stream.getWrappedStream();
+		private InputStream istream = stream;
 		private PublicLzopInputStream dstream;
 		private long offset(){
 			return detect.getRecordStartOffset();
