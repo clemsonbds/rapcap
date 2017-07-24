@@ -1,6 +1,7 @@
 package example;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -44,7 +45,8 @@ public class ParallelDecompress extends Configured implements Tool{
 		private ObjectWritable outputbuff = new ObjectWritable(bytebuff);
 		
 		private FSDataInputStream stream = RecordInputFormat.baseStream;
-		private PublicLzopInputStream dstream = (PublicLzopInputStream) stream.getWrappedStream();
+		private InputStream istream = stream.getWrappedStream();
+		private PublicLzopInputStream dstream = (PublicLzopInputStream) istream;
 		private long offset(){
 			return detect.getRecordStartOffset();
 		}
