@@ -26,7 +26,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 
 import rapcap.hadoop.mr1.lzo.LzoInputFormat;
 import rapcap.hadoop.mr1.RecordInputFormat;
-import rapcap.lib.lzo.PublicLzopInputStream;
+import rapcap.hadoop.mr1.lzo.PublicLzopInputStream;
 import rapcap.lib.lzo.LzopBoundaryDetector;
 	
 
