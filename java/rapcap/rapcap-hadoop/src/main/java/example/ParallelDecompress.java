@@ -92,13 +92,15 @@ public class ParallelDecompress extends Configured implements Tool{
 	}
 	
 	public static void main(String[] args) throws Exception {
-		fileName = args[2];
-		stream = new FSDataInputStream(new FileInputStream(args[0]));
+
         int res = ToolRunner.run(new JobConf(), new ParallelDecompress(), args);
+
         System.exit(res);
 	}
 
 	public int run(String[] args) throws Exception {
+		fileName = args[2];
+		stream = new FSDataInputStream(new FileInputStream(args[0]));
 		JobConf job = (JobConf)this.getConf();
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));
