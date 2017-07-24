@@ -2,6 +2,7 @@ package example;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -34,6 +35,7 @@ import rapcap.lib.lzo.LzopBoundaryDetector;
 public class ParallelDecompress extends Configured implements Tool{
 
 	public static String fileName;
+	public static FSDataInputStream stream;
 
 	public static class ParallelDecompressMapper extends MapReduceBase implements Mapper<LongWritable, LongWritable, LongWritable, ObjectWritable>{
 
@@ -46,7 +48,6 @@ public class ParallelDecompress extends Configured implements Tool{
 		private byte bytebuff[] = new byte[(256*1024)];
 		private ObjectWritable outputbuff = new ObjectWritable(bytebuff);
 		
-		private FSDataInputStream stream = r.baseStream;
 		private InputStream istream = stream.getWrappedStream();
 		private PublicLzopInputStream dstream;
 		private long offset(){
@@ -92,6 +93,7 @@ public class ParallelDecompress extends Configured implements Tool{
 	
 	public static void main(String[] args) throws Exception {
 		fileName = args[2];
+		stream = new FSDataInputStream(new FileInputStream(args[0]));
         int res = ToolRunner.run(new JobConf(), new ParallelDecompress(), args);
         System.exit(res);
 	}
