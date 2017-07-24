@@ -39,7 +39,6 @@ public class ParallelDecompress extends Configured implements Tool{
 	public static class ParallelDecompressMapper extends MapReduceBase implements Mapper<LongWritable, LongWritable, LongWritable, ObjectWritable>{
 
 		private LzopBoundaryDetector detect;
-		private LzopDecompressor lz;
 		private static final LongWritable point = new LongWritable(2);
 		private long pointerLong;
 
@@ -54,7 +53,7 @@ public class ParallelDecompress extends Configured implements Tool{
 
 		int incl_len;
 		ParallelDecompressMapper() throws IOException{
-			dstream = new PublicLzopInputStream(stream, lz, (256*1024));
+			dstream = new PublicLzopInputStream(stream, PublicLzopInputStream.decompressor, (256*1024));
 		}
 		
 		public void map(LongWritable index, LongWritable pointer, OutputCollector<LongWritable, ObjectWritable> output,
