@@ -39,13 +39,14 @@ public class ParallelDecompress extends Configured implements Tool{
 
 		private LzopBoundaryDetector detect;
 		private PublicLzopInputStream p;
+		private RecordInputFormat r;
 		private static final LongWritable point = new LongWritable(2);
 		private long pointerLong;
 
 		private byte bytebuff[] = new byte[(256*1024)];
 		private ObjectWritable outputbuff = new ObjectWritable(bytebuff);
 		
-		private FSDataInputStream stream = RecordInputFormat.baseStream;
+		private FSDataInputStream stream = r.baseStream;
 		private InputStream istream = stream.getWrappedStream();
 		private PublicLzopInputStream dstream;
 		private long offset(){

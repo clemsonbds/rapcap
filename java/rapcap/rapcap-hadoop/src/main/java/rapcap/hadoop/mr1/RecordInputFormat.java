@@ -22,7 +22,7 @@ public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
 
 	protected RecordBoundaryDetector boundaryDetector;
 	private CompressionCodecFactory compressionCodecs;
-	public static FSDataInputStream baseStream;
+	public FSDataInputStream baseStream;
 
 	protected abstract RecordBoundaryDetector createBoundaryDetector(DataInputStream stream) throws IOException;
 	protected abstract RecordReader<K, V> createRecordReader(long start, long end, Seekable baseStream, DataInputStream stream, Reporter reporter) throws IOException;
