@@ -2,7 +2,6 @@ package example;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -25,11 +24,8 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.Seekable;
-import org.apache.hadoop.fs.PositionedReadable;
 
 import rapcap.hadoop.mr1.lzo.LzoInputFormat;
-import rapcap.hadoop.mr1.RecordInputFormat;
 import rapcap.hadoop.mr1.lzo.PublicLzopInputStream;
 import rapcap.lib.lzo.LzopBoundaryDetector;
 	
@@ -43,14 +39,13 @@ public class ParallelDecompress extends Configured implements Tool{
 
 		private LzopBoundaryDetector detect;
 		private PublicLzopInputStream p;
-		private RecordInputFormat r;
 		private static final LongWritable point = new LongWritable(2);
 		private long pointerLong;
 
 		private byte bytebuff[] = new byte[(256*1024)];
 		private ObjectWritable outputbuff = new ObjectWritable(bytebuff);
 		
-		private InputStream istream = stream;
+
 		private PublicLzopInputStream dstream;
 		private long offset(){
 			return detect.getRecordStartOffset();
@@ -58,7 +53,7 @@ public class ParallelDecompress extends Configured implements Tool{
 
 		int incl_len;
 		ParallelDecompressMapper() throws IOException{
-			dstream = new PublicLzopInputStream(istream, p.decompressor, (256*1024));
+			dstream = new PublicLzopInputStream(stream, p.decompressor, (256*1024));
 		}
 		
 		public void map(LongWritable index, LongWritable pointer, OutputCollector<LongWritable, ObjectWritable> output,
