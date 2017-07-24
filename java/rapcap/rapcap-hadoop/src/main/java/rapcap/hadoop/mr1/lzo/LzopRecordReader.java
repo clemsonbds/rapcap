@@ -8,10 +8,10 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.ObjectWritable;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
-import rapcap.lib.lzo.PublicLzopInputStream;
 
 public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritable> {
 
+	
 	Seekable baseStream;
 	DataInputStream stream;
 	Reporter reporter;
