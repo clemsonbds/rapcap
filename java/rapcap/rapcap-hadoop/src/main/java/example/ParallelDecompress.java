@@ -25,6 +25,8 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.Seekable;
+import org.apache.hadoop.fs.PositionedReadable;
 
 import rapcap.hadoop.mr1.lzo.LzoInputFormat;
 import rapcap.hadoop.mr1.RecordInputFormat;
@@ -101,7 +103,9 @@ public class ParallelDecompress extends Configured implements Tool{
 	public int run(String[] args) throws Exception {
 		fileName = args[2];
 		FileInputStream fs = new FileInputStream(args[0]);
-		stream = new FSDataInputStream(fs);
+		Seekable s = (Seekable) fs;
+		PositionedReadable pr = (PositionedReadable) s;
+		stream = new FSDataInputStream((InputStream) pr);
 		JobConf job = (JobConf)this.getConf();
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));
