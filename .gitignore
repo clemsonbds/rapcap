@@ -3,3 +3,14 @@
 .classpath
 .project
 .settings
+*.zip
+*.snap
+*.xmi
+.metadata/.plugins/org.eclipse.jdt.core/externalLibsTimeStamps
+.metadata/.plugins/org.eclipse.jdt.core/savedIndexNames.txt
+*.dat
+.metadata/.plugins/org.eclipse.jdt.launching/.install.xml
+.metadata/.plugins/org.eclipse.core.resources/.safetable/org.eclipse.core.resources
+*.pcap
+.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/16.png
+.metadata*

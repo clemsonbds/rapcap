@@ -1,6 +1,6 @@
 package example;
 
-import java.io.IOException;
+/*import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -21,7 +21,7 @@ import org.apache.hadoop.util.ToolRunner;
 import rapcap.hadoop.mr1.pcap.PcapInputFormat;
 
 //import net.ripe.hadoop.pcap.io.PcapInputFormat;
-/*
+
 public class SplitCountPacketsLocal extends Configured implements Tool {
 
 	public static class PacketCountMapper extends Mapper<LongWritable, ObjectWritable, Text, IntWritable> {

@@ -1,13 +1,10 @@
 package example;
 
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteOrder;
 
 import rapcap.lib.RecordBoundaryDetector;
-import rapcap.lib.Util;
 import rapcap.lib.pcap.PcapBoundaryDetector;
 
 public class FindFirstAfter {

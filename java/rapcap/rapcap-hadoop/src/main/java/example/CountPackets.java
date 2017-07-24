@@ -1,9 +1,9 @@
 package example;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
