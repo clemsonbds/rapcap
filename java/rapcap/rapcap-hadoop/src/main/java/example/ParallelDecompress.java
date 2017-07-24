@@ -102,10 +102,8 @@ public class ParallelDecompress extends Configured implements Tool{
 
 	public int run(String[] args) throws Exception {
 		fileName = args[2];
-		FileInputStream fs = new FileInputStream(args[0]);
-		Seekable s = (Seekable) fs;
-		PositionedReadable pr = (PositionedReadable) s;
-		stream = new FSDataInputStream((InputStream) pr);
+		Path path = new Path(args[0]);
+		stream = new FSDataInputStream(path.getFileSystem(getConf()).open(path));
 		JobConf job = (JobConf)this.getConf();
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));
