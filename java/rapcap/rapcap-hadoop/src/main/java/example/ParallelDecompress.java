@@ -39,8 +39,8 @@ public class ParallelDecompress extends Configured implements Tool{
 		private LzopBoundaryDetector detect;
 		private static final LongWritable point = new LongWritable(2);
 		private long pointerLong;
-		
-		private byte bytebuff[];
+
+		private byte bytebuff[] = new byte[(256*1024)];
 		private ObjectWritable outputbuff = new ObjectWritable(bytebuff);
 		
 		private FSDataInputStream stream = RecordInputFormat.baseStream;
@@ -55,7 +55,7 @@ public class ParallelDecompress extends Configured implements Tool{
 				Reporter reporter) throws IOException {
 			pointerLong = pointer.get();
 			
-			stream.seek((offset() + 4 ));
+			stream.seek((offset() + 4));
 			incl_len = stream.readInt();
 			
 			dstream.seek(pointerLong);
