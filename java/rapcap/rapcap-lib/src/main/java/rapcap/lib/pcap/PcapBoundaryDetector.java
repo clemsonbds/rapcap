@@ -7,15 +7,13 @@ import java.nio.ByteOrder;
 
 import net.ripe.hadoop.pcap.PcapReader;
 import rapcap.lib.RecordBoundaryDetector;
-import rapcap.lib.RecordFormat;
 
 public class PcapBoundaryDetector extends RecordBoundaryDetector {
 	public long snaplen;
 	public ByteOrder byteorder;
 
 	public PcapBoundaryDetector(BufferedInputStream stream) throws IOException {
-        DataInputStream dstream = new DataInputStream(stream);
-		PcapReader reader = new PcapReader(dstream); // reads the first 24 bytes of the file, even remotely
+		PcapReader reader = new PcapReader(new DataInputStream(stream)); // reads the first 24 bytes of the file
 
     	try {
     		snaplen = PcapReaderAccessor.getSnapLen(reader);
@@ -25,8 +23,7 @@ public class PcapBoundaryDetector extends RecordBoundaryDetector {
     		throw new IOException("Unable to access private fields of PcapReader class.  JVM security may be the problem.");
     	}
 
-		RecordFormat format = new PcapRecordFormat((int)snaplen, byteorder);
-		initialize((BufferedInputStream)stream, format);
+		initialize(stream, new PcapRecordFormat((int) snaplen, byteorder));
 	}
 
 	@Override

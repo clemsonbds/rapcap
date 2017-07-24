@@ -1,73 +1,64 @@
 package rapcap.lib.lzo;
 
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-
-import org.apache.commons.io.input.CountingInputStream;
 
 import rapcap.lib.RecordBoundaryDetector;
-import rapcap.lib.RecordFormat;
-
-import com.hadoop.compression.lzo.LzopCodec;
-import com.hadoop.compression.lzo.LzopDecompressor;
 
 public class LzopBoundaryDetector extends RecordBoundaryDetector {
 	private int snaplen;
 	private long globalHeaderLength;
 
-	private int readInt(InputStream in) throws IOException {
-		byte[] buf = new byte[4];
-		in.read(buf, 0, 4);
-		return ByteBuffer.wrap(buf).getInt();
-	}
-/*
-	private void readHeader(InputStream in) throws IOException {
+	private void readGlobalHeader(DataInputStream in) throws IOException {
+		globalHeaderLength = 0;
 		byte[] buf = new byte[9];
+
 		in.read(buf, 0, 9); // magic num
 		in.read(buf, 0, 2); // version
 		in.read(buf, 0, 2); // library version
 		in.read(buf, 0, 2); // extract version
 		in.read(buf, 0, 1); // method
 		in.read(buf, 0, 1); // level
-
-		int flags = readInt(in); // flags
+		globalHeaderLength += 17;
+		
+		int flags = in.readInt(); // flags
 		boolean extrafield = 0 != (flags & 0x00000040);
+		globalHeaderLength += 4;
 		
 		in.read(buf, 0, 4); // mode
 		in.read(buf, 0, 4); // mtime
 		in.read(buf, 0, 4); // gmtdiff
+		globalHeaderLength += 12;
 
 		in.read(buf, 0, 1); // filename len
 		in.read(new byte[buf[0]]);
-
+		globalHeaderLength += buf[0] + 1;
+		
 		in.read(buf, 0, 4); // csum
+		globalHeaderLength += 4;
 
 		if (extrafield) {
-			int len = readInt(in);
+			int len = in.readInt();
 			in.read(new byte[len], 0, len);
 			in.read(buf, 0, 4); // csum
+			globalHeaderLength += len + 8;
 		}
 	}
-*/	
+	
 	public LzopBoundaryDetector(BufferedInputStream stream) throws IOException {
-		int buffer_size = LzopCodec.DEFAULT_LZO_BUFFER_SIZE;
-		LzopDecompressor decompressor = new LzopDecompressor(buffer_size);
+		DataInputStream dis = new DataInputStream(stream);
 
-		//stream.mark(LzopRecordFormat.HEADER_LEN);
+		// reading the header will advance the stream to the first byte of the first compressed block header
+		readGlobalHeader(dis);
 
-		stream.mark(1000);
+		// read the uncompressed length, this should be the same for all records
+		dis.mark(4);
+		this.snaplen = dis.readInt();
+		dis.reset();
 
-		// this reads the header from stream, advancing the pointer
-		CountingInputStream counting_stream = new CountingInputStream(stream);
-		PublicLzopInputStream lis = new PublicLzopInputStream(counting_stream, decompressor, buffer_size);
-		this.globalHeaderLength = counting_stream.getCount();
-		this.snaplen = readInt(stream);
-		stream.reset();
-
-		RecordFormat format = new LzopRecordFormat(snaplen, lis, counting_stream);
-		initialize(stream, format);
+		// initializes with a stream already advanced past the global header
+		initialize(stream, new LzopRecordFormat(snaplen));
 	}
 
 	@Override

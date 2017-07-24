@@ -1,15 +1,10 @@
 package rapcap.lib;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.nio.ByteOrder;
 
-public interface RecordFormat {
-	public int maxRecordBodyLen();
-	public int maxRecordHeaderLen();
-	public ByteOrder byteOrder();
-
-//	public Record interpretRecord(byte[] bytes, int offset) throws IOException;
-	public void testRecordHeader(DataInputStream input, Record record) throws IOException;
-	public void getRecordLength(DataInputStream input, Record record) throws IOException;
+public abstract class RecordFormat {
+	public int MAX_HEADER_LEN;
+	public int MAX_BODY_LEN;
+	
+	public abstract boolean interpretRecordHeader(byte[] header_buf, Record record) throws IOException;
 }
