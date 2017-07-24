@@ -99,7 +99,6 @@ public class ParallelDecompress extends Configured implements Tool{
 
 		job.setJarByClass(CountPackets.class);
 		job.setMapperClass(ParallelDecompressMapper.class);
-		job.setCombinerClass(null);
 		job.setReducerClass(ParallelDecompressReducer.class);
 		
 		job.setInputFormat(LzoInputFormat.class);
