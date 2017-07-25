@@ -59,8 +59,8 @@ public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritab
 		input_buffer = new byte[(int)(end - baseStream.getPos())];
 		
 		key.set(++blockCount);
-		int decompressed_bytes = dstream.decompress(input_buffer, 0, (int)(end-start));
-		value.set(input_buffer.toString());
+		dstream.decompress(input_buffer, 0, (int)(end-start));
+		value.set(input_buffer);
 		reporter.setStatus("Read " + getPos() + " of " + end + " bytes");
 		reporter.progress();
 

@@ -15,7 +15,7 @@ import rapcap.hadoop.mr1.RecordInputFormat;
 import rapcap.lib.lzo.LzopBoundaryDetector;
 
 public class LzoInputFormat extends RecordInputFormat<LongWritable, ObjectWritable> {
-
+	
 	@Override
 	protected RecordBoundaryDetector createBoundaryDetector(DataInputStream stream) throws IOException {
 		return new LzopBoundaryDetector(new BufferedInputStream(stream));
@@ -23,7 +23,7 @@ public class LzoInputFormat extends RecordInputFormat<LongWritable, ObjectWritab
 
 	@Override
 	protected RecordReader<LongWritable, ObjectWritable> createRecordReader(long start, long end, Seekable baseStream, 
-			DataInputStream stream, Reporter reporter) throws IOException { //None of this works yet
+			DataInputStream stream, Reporter reporter) throws IOException { 
 		return new LzopRecordReader(start, end, baseStream, stream, reporter);
 	}
 }
