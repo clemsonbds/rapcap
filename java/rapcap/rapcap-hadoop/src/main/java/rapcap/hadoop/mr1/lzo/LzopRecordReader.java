@@ -31,7 +31,10 @@ public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritab
 		
 		int buffer_size = LzopCodec.DEFAULT_LZO_BUFFER_SIZE;
 		LzopDecompressor decompressor = new LzopDecompressor(buffer_size);
+		
+		baseStream.seek(0);
 		decompressor_stream = new PublicLzopInputStream(stream, decompressor, buffer_size);
+		
 	}
 
 	public void close() throws IOException {
@@ -72,6 +75,7 @@ public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritab
 			decompressor_buffer = new byte[decompressed_size];
 		}
 		
+		decompressor_stream.seek(start_pos);
 		decompressor_stream.decompress(decompressor_buffer, 0, decompressor_buffer.length);
 
 		key.set(baseStream.getPos());
