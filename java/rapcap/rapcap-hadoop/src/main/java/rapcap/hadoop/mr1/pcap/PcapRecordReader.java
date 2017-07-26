@@ -17,11 +17,11 @@ public class PcapRecordReader extends net.ripe.hadoop.pcap.io.reader.PcapRecordR
 	private long next_start;
 	private long tstart;
 
-	public PcapRecordReader(PcapReader pcapReader, long start_byte, long end_byte, Seekable baseStream, DataInputStream stream,
+	public PcapRecordReader(PcapReader pcapReader, long start_byte, long next_start, Seekable baseStream, DataInputStream stream,
 			Reporter reporter) throws IOException {
-		super(pcapReader, start_byte, end_byte, baseStream, stream, reporter);
+		super(pcapReader, start_byte, next_start-1, baseStream, stream, reporter);
 		this.tstart = start_byte;
-		this.next_start = end_byte+1;
+		this.next_start = next_start;
 		ID = new Random().nextInt(99);
 	}
 

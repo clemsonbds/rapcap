@@ -73,7 +73,7 @@ System.out.printf("rapcap: adjusted indices to (%d, %d)\n", first_byte, next_fir
         }
 
         baseStream.seek(first_byte);
-        return createRecordReader(first_byte, next_first_byte-1, baseStream, stream, reporter);
+        return createRecordReader(first_byte, next_first_byte, baseStream, stream, reporter);
 	}
 	
 	@Override

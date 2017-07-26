@@ -9,28 +9,34 @@ import org.apache.hadoop.io.ObjectWritable;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
 
-public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritable> {
+import com.hadoop.compression.lzo.LzopCodec;
+import com.hadoop.compression.lzo.LzopDecompressor;
 
+public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritable> {
 	
 	Seekable baseStream;
 	DataInputStream stream;
 	Reporter reporter;
 
-	long blockCount = 0;
-	long start, end;
-	public PublicLzopInputStream dstream = (PublicLzopInputStream)baseStream;
-	byte input_buffer[];
+	long start, next_start;
+	public PublicLzopInputStream decompressor_stream;
+	byte decompressor_buffer[];
 	
-	public LzopRecordReader(long start, long end, Seekable baseStream, DataInputStream stream, Reporter reporter) throws IOException {
+	public LzopRecordReader(long start, long next_start, Seekable baseStream, DataInputStream stream, Reporter reporter) throws IOException {
 		this.baseStream = baseStream;
 		this.stream = stream;
 		this.start = start;
-		this.end = end;
+		this.next_start = next_start;
 		this.reporter = reporter;
+		
+		int buffer_size = LzopCodec.DEFAULT_LZO_BUFFER_SIZE;
+		LzopDecompressor decompressor = new LzopDecompressor(buffer_size);
+		decompressor_stream = new PublicLzopInputStream(stream, decompressor, buffer_size);
 	}
 
 	public void close() throws IOException {
 		stream.close();
+		decompressor_stream.close();
 	}
 
 	public LongWritable createKey() {
@@ -46,22 +52,32 @@ public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritab
 	}
 
 	public float getProgress() throws IOException {
-		if (start == end)
-			return 0;
-		return Math.min(1.0f, (getPos() - start) / (float)(end - start));
+		if (start == next_start)
+			return 1;
+		
+		return Math.min(1.0f, (getPos() - start) / (float)(next_start - start));
 	}
 
 
 	public boolean next(LongWritable key, ObjectWritable value) throws IOException {
-		if (start == end)
+		if (start >= next_start)
 			return false;
+
+		long start_pos = baseStream.getPos();
+		int decompressed_size = stream.readInt();
+		baseStream.seek(start_pos);
 		
-		input_buffer = new byte[(int)(end - baseStream.getPos())];
+		if (decompressor_buffer == null
+		 || decompressor_buffer.length < decompressed_size) {
+			decompressor_buffer = new byte[decompressed_size];
+		}
 		
-		key.set(++blockCount);
-		dstream.decompress(input_buffer, 0, (int)(end-start));
-		value.set(input_buffer);
-		reporter.setStatus("Read " + getPos() + " of " + end + " bytes");
+		decompressor_stream.decompress(decompressor_buffer, 0, decompressor_buffer.length);
+
+		key.set(baseStream.getPos());
+		value.set(decompressor_buffer);
+
+		reporter.setStatus("Read " + getPos() + " of " + next_start + " bytes");
 		reporter.progress();
 
 		return true;
