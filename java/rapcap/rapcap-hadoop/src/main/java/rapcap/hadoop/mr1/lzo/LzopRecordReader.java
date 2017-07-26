@@ -75,7 +75,7 @@ public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritab
 			decompressor_buffer = new byte[decompressed_size];
 		}
 		
-		decompressor_stream.seek(start_pos);
+		baseStream.seek(start_pos);
 		decompressor_stream.decompress(decompressor_buffer, 0, decompressor_buffer.length);
 
 		key.set(baseStream.getPos());
