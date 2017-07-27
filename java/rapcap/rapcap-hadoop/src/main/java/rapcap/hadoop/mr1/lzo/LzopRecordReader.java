@@ -33,7 +33,7 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 		
 		baseStream.seek(0);
 		decompressor_stream = new PublicLzopInputStream(stream, decompressor, buffer_size);
-		
+		baseStream.seek(start);
 	}
 
 	public void close() throws IOException {
@@ -54,18 +54,17 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 	}
 
 	public float getProgress() throws IOException {
-		if (start == next_start)
+		if (getPos() >= next_start)
 			return 1;
 		
 		return Math.min(1.0f, (getPos() - start) / (float)(next_start - start));
 	}
 
-
 	public boolean next(LongWritable key, BytesWritable value) throws IOException {
-		if (start >= next_start)
+		if (getPos() >= next_start)
 			return false;
 
-		long start_pos = baseStream.getPos();
+		long start_pos = getPos();
 		int decompressed_size = stream.readInt();
 		baseStream.seek(start_pos);
 
@@ -78,7 +77,7 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 		value.setCapacity(decompressed_size);
 		decompressor_stream.decompress(value.getBytes(), 0, decompressed_size);
 
-		key.set(baseStream.getPos());
+		key.set(getPos());
 
 		reporter.setStatus("Read " + getPos() + " of " + next_start + " bytes");
 		reporter.progress();
