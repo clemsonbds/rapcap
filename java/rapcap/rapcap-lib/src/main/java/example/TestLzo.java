@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import rapcap.lib.RecordBoundaryDetector;
 import rapcap.lib.lzo.LzopBoundaryDetector;
 
 public class TestLzo {
@@ -12,13 +11,12 @@ public class TestLzo {
 	public static void main(String[] args) throws IOException {
 		FileInputStream fis = new FileInputStream(args[0]);
 		BufferedInputStream bis = new BufferedInputStream(fis);
-		int to_find = new Integer(args[1]);
 
-		bis.mark(47);
-		RecordBoundaryDetector detector = new LzopBoundaryDetector(bis);
-		bis.reset();
-
-		long to_skip = to_find;
+		LzopBoundaryDetector detector = new LzopBoundaryDetector(bis);
+		
+		long to_find = new Long(args[1]);
+		long to_skip = to_find - detector.globalHeaderLength;
+		
 		while (to_skip > 0) {
 			long skipped = bis.skip(to_skip);
 			to_skip -= skipped;

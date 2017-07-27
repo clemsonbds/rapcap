@@ -9,9 +9,12 @@ import rapcap.lib.Util;
 
 public class LzopRecordFormat extends RecordFormat {
 	
+	private int CHECKSUM_LEN;
+
 	public LzopRecordFormat(int maxBodyLen) {
 		this.MAX_HEADER_LEN = 8;
 		this.MAX_BODY_LEN = maxBodyLen;
+		this.CHECKSUM_LEN = 4;
 	}
 
 	public boolean interpretRecordHeader(byte[] header_buf, Record record) throws IOException {
@@ -24,7 +27,7 @@ public class LzopRecordFormat extends RecordFormat {
 			return false;
 
 		record.header_len = MAX_HEADER_LEN;
-		record.body_len = compressed_len - 4; // compressed_len includes the size of the compressed_len integer
+		record.body_len = compressed_len + CHECKSUM_LEN; // compressed_len includes the size of the compressed_len integer
 		return true;
 	}
 }
