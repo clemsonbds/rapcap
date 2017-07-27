@@ -14,7 +14,7 @@ public class TestLzo {
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		int to_find = new Integer(args[1]);
 
-		bis.mark(47);
+		bis.mark(100);
 		RecordBoundaryDetector detector = new LzopBoundaryDetector(bis);
 		bis.reset();
 
