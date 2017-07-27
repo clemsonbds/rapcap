@@ -1,10 +1,8 @@
 package example;
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.nio.channels.Channels;
 
 import rapcap.lib.RecordBoundaryDetector;
 import rapcap.lib.lzo.LzopBoundaryDetector;
@@ -12,16 +10,24 @@ import rapcap.lib.lzo.LzopBoundaryDetector;
 public class TestLzo {
 
 	public static void main(String[] args) throws IOException {
-		RandomAccessFile raf = new RandomAccessFile(args[0], "r");
-		InputStream is = Channels.newInputStream(raf.getChannel());
-		BufferedInputStream bis = new BufferedInputStream(is);
-System.out.println(is.available());
+		FileInputStream fis = new FileInputStream(args[0]);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		int to_find = new Integer(args[1]);
+
+		bis.mark(47);
 		RecordBoundaryDetector detector = new LzopBoundaryDetector(bis);
-System.out.println(is.available());
+		bis.reset();
+
+		long to_skip = to_find;
+		while (to_skip > 0) {
+			long skipped = bis.skip(to_skip);
+			to_skip -= skipped;
+		}
 
 		int index = detector.detect();
-		System.out.println("Found solution at "+index);
-		raf.close();
+		System.out.printf("Started from index %d, found header at %d\n", to_find, to_find + index);
+		bis.close();
+
 	}
 
 }

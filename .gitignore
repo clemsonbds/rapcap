@@ -14,3 +14,7 @@
 *.pcap
 .metadata/.plugins/org.eclipse.jdt.ui/jdt-images/16.png
 .metadata*
+*.class
+.recommenders
+.DS_Store
+*.lzo
