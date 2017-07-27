@@ -7,8 +7,8 @@ import java.io.IOException;
 import rapcap.lib.RecordBoundaryDetector;
 
 public class LzopBoundaryDetector extends RecordBoundaryDetector {
-	private int snaplen;
-	private long globalHeaderLength;
+	public int snaplen;
+	public long globalHeaderLength;
 
 	private void readGlobalHeader(DataInputStream in) throws IOException {
 		globalHeaderLength = 0;

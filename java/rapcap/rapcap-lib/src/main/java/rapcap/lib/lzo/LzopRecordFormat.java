@@ -24,7 +24,7 @@ public class LzopRecordFormat extends RecordFormat {
 			return false;
 
 		record.header_len = MAX_HEADER_LEN;
-		record.body_len = compressed_len;
+		record.body_len = compressed_len - 4; // compressed_len includes the size of the compressed_len integer
 		return true;
 	}
 }
