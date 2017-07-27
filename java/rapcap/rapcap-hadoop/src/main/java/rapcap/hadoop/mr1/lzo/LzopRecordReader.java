@@ -75,7 +75,13 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 		}
 */		
 		value.setCapacity(decompressed_size);
+		
+		try {
 		decompressor_stream.decompress(value.getBytes(), 0, decompressed_size);
+		}
+		catch (IOException e) {
+			throw new IOException("start=" + start + ", pos=" + start_pos + ", size=" + decompressed_size + ", " + e.getMessage());
+		}
 
 		key.set(getPos());
 
