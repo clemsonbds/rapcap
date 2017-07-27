@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import rapcap.lib.lzo.LzopBoundaryDetector;
 
@@ -21,31 +22,26 @@ public class LzoPrintIndices {
 		bis.close();
 
 		
-		File file = new File(args[0]);
+		RandomAccessFile file = new RandomAccessFile(args[0], "r");
 		System.out.printf("global header len = %d, snaplen = %d, filesize = %d\n",
 				global_len, snap_len, file.length());
 
-		fis = new FileInputStream(file);
-		DataInputStream dis = new DataInputStream(fis);
-		
 		long index = global_len;
-		long pos = 0;
 
 		while (index < file.length()) {
-			while (pos < index) {
-				long skipped = dis.skip(index - pos);
-				pos += skipped;
-			}
+			file.seek(index);
 
-			long uncompressed_len = dis.readInt();
-			long compressed_len = dis.readInt();
-
-			System.out.printf("%7d  %7d  %7d  %7d\n", pos, index, uncompressed_len, compressed_len);
+			long uncompressed_len = file.readInt();
+//			file.seek(index+4);
 			
-			index += compressed_len + 4;
+			long compressed_len = file.readInt();
+
+			System.out.printf("%7d  %7d  %7d\n", index, uncompressed_len, compressed_len);
+			
+			index += compressed_len + 12;
 		}
 
-		dis.close();
+		file.close();
 	}
 
 }
