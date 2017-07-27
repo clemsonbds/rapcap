@@ -5,8 +5,9 @@ import java.util.Iterator;
 
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.ObjectWritable;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.mapred.JobConf;
@@ -24,14 +25,14 @@ import rapcap.hadoop.mr1.lzo.LzoInputFormat;
 
 public class ParallelDecompress extends Configured implements Tool{
 
-	public static class ParallelDecompressMapper extends MapReduceBase implements Mapper<LongWritable, ObjectWritable, LongWritable, ObjectWritable>{
-		public void map(LongWritable index, ObjectWritable data, OutputCollector<LongWritable, ObjectWritable> output, Reporter reporter) throws IOException {
+	public static class ParallelDecompressMapper extends MapReduceBase implements Mapper<LongWritable, BytesWritable, LongWritable, BytesWritable>{
+		public void map(LongWritable index, BytesWritable data, OutputCollector<LongWritable, BytesWritable> output, Reporter reporter) throws IOException {
 			output.collect(index, data);
 		}
 	}
 
-	public static class ParallelDecompressReducer extends MapReduceBase implements Reducer<LongWritable, ObjectWritable, LongWritable, ObjectWritable>{
-		public void reduce(LongWritable key, Iterator<ObjectWritable> values, OutputCollector<LongWritable, ObjectWritable> output, Reporter reporter) throws IOException {
+	public static class ParallelDecompressReducer extends MapReduceBase implements Reducer<LongWritable, BytesWritable, LongWritable, BytesWritable>{
+		public void reduce(LongWritable key, Iterator<BytesWritable> values, OutputCollector<LongWritable, BytesWritable> output, Reporter reporter) throws IOException {
 			output.collect(key, values.next());
 		}
 	}
@@ -58,7 +59,7 @@ public class ParallelDecompress extends Configured implements Tool{
 
 		job.setOutputFormat(ByteOutputFormat.class);
 		job.setOutputKeyClass(LongWritable.class);
-		job.setOutputValueClass(ObjectWritable.class);
+		job.setOutputValueClass(BytesWritable.class);
 
 		job.setNumReduceTasks(1);
 		JobClient.runJob(job);
