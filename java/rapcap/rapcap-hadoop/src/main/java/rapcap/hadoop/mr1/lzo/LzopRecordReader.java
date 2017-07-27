@@ -4,15 +4,15 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import org.apache.hadoop.fs.Seekable;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.ObjectWritable;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
 
 import com.hadoop.compression.lzo.LzopCodec;
 import com.hadoop.compression.lzo.LzopDecompressor;
 
-public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritable> {
+public class LzopRecordReader implements RecordReader<LongWritable, BytesWritable> {
 	
 	Seekable baseStream;
 	DataInputStream stream;
@@ -20,7 +20,6 @@ public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritab
 
 	long start, next_start;
 	public PublicLzopInputStream decompressor_stream;
-	byte decompressor_buffer[];
 	
 	public LzopRecordReader(long start, long next_start, Seekable baseStream, DataInputStream stream, Reporter reporter) throws IOException {
 		this.baseStream = baseStream;
@@ -43,8 +42,8 @@ public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritab
 		return new LongWritable();
 	}
 
-	public ObjectWritable createValue() {
-		return new ObjectWritable();
+	public BytesWritable createValue() {
+		return new BytesWritable();
 	}
 
 	public long getPos() throws IOException {
@@ -59,23 +58,25 @@ public class LzopRecordReader implements RecordReader<LongWritable, ObjectWritab
 	}
 
 
-	public boolean next(LongWritable key, ObjectWritable value) throws IOException {
+	public boolean next(LongWritable key, BytesWritable value) throws IOException {
 		if (start >= next_start)
 			return false;
 
 		long start_pos = baseStream.getPos();
 		int decompressed_size = stream.readInt();
 		baseStream.seek(start_pos);
-		
+
+/*
 		if (decompressor_buffer == null
 		 || decompressor_buffer.length < decompressed_size) {
 			decompressor_buffer = new byte[decompressed_size];
 		}
+*/		
+		value.setCapacity(decompressed_size);
 		
-		decompressor_stream.decompress(decompressor_buffer, 0, decompressor_buffer.length);
+		decompressor_stream.decompress(value.getBytes(), 0, decompressed_size);
 
 		key.set(baseStream.getPos());
-		value.set(decompressor_buffer);
 
 		reporter.setStatus("Read " + getPos() + " of " + next_start + " bytes");
 		reporter.progress();
