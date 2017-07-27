@@ -80,7 +80,7 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 			decompressor_buffer = new byte[decompressed_size];
 		}
 */		
-		value.setCapacity(decompressed_size);
+		value.setSize(decompressed_size);
 		long actual;
 
 		try {
