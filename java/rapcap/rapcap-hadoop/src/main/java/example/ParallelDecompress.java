@@ -27,6 +27,7 @@ public class ParallelDecompress extends Configured implements Tool{
 
 	public static class ParallelDecompressMapper extends MapReduceBase implements Mapper<LongWritable, BytesWritable, LongWritable, BytesWritable>{
 		public void map(LongWritable index, BytesWritable data, OutputCollector<LongWritable, BytesWritable> output, Reporter reporter) throws IOException {
+			System.out.printf("rapcap: map received index=%d, data len = %d\n", index, data.getLength());
 			output.collect(index, data);
 		}
 	}
