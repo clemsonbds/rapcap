@@ -28,7 +28,7 @@ public class LzoPrintIndices {
 		fis = new FileInputStream(file);
 		DataInputStream dis = new DataInputStream(fis);
 		
-		long index = detector.globalHeaderLength;
+		long index = global_len;
 		long pos = 0;
 
 		while (index < file.length()) {
@@ -40,7 +40,7 @@ public class LzoPrintIndices {
 			long uncompressed_len = dis.readInt();
 			long compressed_len = dis.readInt();
 
-			System.out.printf("%7d  %7d  %7d\n", index, uncompressed_len, compressed_len);
+			System.out.printf("%7d  %7d  %7d  %7d\n", pos, index, uncompressed_len, compressed_len);
 			
 			index += compressed_len + 4;
 		}
