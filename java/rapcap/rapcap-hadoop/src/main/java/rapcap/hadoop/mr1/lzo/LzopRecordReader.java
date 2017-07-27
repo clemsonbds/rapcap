@@ -33,7 +33,6 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 		LzopDecompressor decompressor = new LzopDecompressor(buffer_size);
 		
 		baseStream.seek(0);
-		decompressor_stream.resetState();
 
 		decompressor_stream = new PublicLzopInputStream(stream, decompressor, buffer_size);
 
