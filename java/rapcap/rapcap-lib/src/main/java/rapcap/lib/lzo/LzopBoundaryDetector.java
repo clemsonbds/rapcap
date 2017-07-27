@@ -1,8 +1,8 @@
 package rapcap.lib.lzo;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import rapcap.lib.RecordBoundaryDetector;
 
@@ -10,7 +10,8 @@ public class LzopBoundaryDetector extends RecordBoundaryDetector {
 	public int snaplen;
 	public long globalHeaderLength;
 
-	private void readGlobalHeader(DataInputStream in) throws IOException {
+	private void readGlobalHeader(InputStream stream) throws IOException {
+		DataInputStream in = new DataInputStream(stream);
 		globalHeaderLength = 0;
 		byte[] buf = new byte[9];
 
@@ -46,18 +47,15 @@ public class LzopBoundaryDetector extends RecordBoundaryDetector {
 		}
 	}
 	
-	public LzopBoundaryDetector(BufferedInputStream stream) throws IOException {
-		DataInputStream dis = new DataInputStream(stream);
-
+	public LzopBoundaryDetector(InputStream stream) throws IOException {
 		// reading the header will advance the stream to the first byte of the first compressed block header
-		readGlobalHeader(dis);
+		readGlobalHeader(stream);
 
 		// read the uncompressed length, this should be the same for all records
-		dis.mark(4);
-		this.snaplen = dis.readInt();
-		dis.reset();
+		this.snaplen = new DataInputStream(stream).readInt();
 
-		// initializes with a stream already advanced past the global header
+		// initializes with a stream already advanced past the global header.  count on the calling function
+		// to figure out where to start detecting from.
 		initialize(stream, new LzopRecordFormat(snaplen));
 	}
 

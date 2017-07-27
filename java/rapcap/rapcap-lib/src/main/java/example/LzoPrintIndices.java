@@ -1,8 +1,5 @@
 package example;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -14,12 +11,11 @@ public class LzoPrintIndices {
 	public static void main(String[] args) throws IOException {
 		
 		FileInputStream fis = new FileInputStream(args[0]);
-		BufferedInputStream bis = new BufferedInputStream(fis);
 
-		LzopBoundaryDetector detector = new LzopBoundaryDetector(bis);
+		LzopBoundaryDetector detector = new LzopBoundaryDetector(fis);
 		long global_len = detector.globalHeaderLength;
 		long snap_len = detector.snaplen;
-		bis.close();
+		fis.close();
 
 		
 		RandomAccessFile file = new RandomAccessFile(args[0], "r");

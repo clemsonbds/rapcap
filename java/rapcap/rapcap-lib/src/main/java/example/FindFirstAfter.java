@@ -1,6 +1,5 @@
 package example;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -12,17 +11,14 @@ public class FindFirstAfter {
 	public static void main(String[] args) throws IOException {
 		
 		FileInputStream fis = new FileInputStream(args[0]);
-		BufferedInputStream bis = new BufferedInputStream(fis);
 //		DataInputStream dis = new DataInputStream(bis);
 		int to_find = new Integer(args[1]);
 
-		bis.mark(24);
-		RecordBoundaryDetector detector = new PcapBoundaryDetector(bis);
-		bis.reset();
+		RecordBoundaryDetector detector = new PcapBoundaryDetector(fis);
 
-		long to_skip = to_find;
+		long to_skip = to_find - 24;
 		while (to_skip > 0) {
-			long skipped = bis.skip(to_skip);
+			long skipped = fis.skip(to_skip);
 			to_skip -= skipped;
 		}
 

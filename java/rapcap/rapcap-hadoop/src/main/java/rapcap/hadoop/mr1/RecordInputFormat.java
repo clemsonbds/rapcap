@@ -2,6 +2,7 @@ package rapcap.hadoop.mr1;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -20,15 +21,14 @@ import rapcap.lib.RecordBoundaryDetector;
 
 public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
 
-	protected RecordBoundaryDetector boundaryDetector;
-	private CompressionCodecFactory compressionCodecs;
-	public FSDataInputStream baseStream;
+//	private CompressionCodecFactory compressionCodecs;
+//	public FSDataInputStream baseStream;
 
-	protected abstract RecordBoundaryDetector createBoundaryDetector(DataInputStream stream) throws IOException;
-	protected abstract RecordReader<K, V> createRecordReader(long start, long end, Seekable baseStream, DataInputStream stream, Reporter reporter) throws IOException;
+	protected abstract RecordBoundaryDetector createBoundaryDetector(InputStream stream) throws IOException;
+	protected abstract RecordReader<K, V> createRecordReader(long start, long end, Seekable baseStream, InputStream stream, Reporter reporter) throws IOException;
 
     public void configure(JobConf conf) {
-    	compressionCodecs = new CompressionCodecFactory(conf);
+//    	compressionCodecs = new CompressionCodecFactory(conf);
     }
 
 	public final RecordReader<K, V> getRecordReader(InputSplit split, JobConf conf, Reporter reporter) throws IOException {
@@ -38,8 +38,9 @@ public abstract class RecordInputFormat<K, V> extends FileInputFormat<K, V> {
         long first_byte = fileSplit.getStart();
         long next_first_byte = first_byte + fileSplit.getLength();
 System.out.printf("rapcap: computing for split (%d,%d)\n", first_byte, next_first_byte);
-       	baseStream = path.getFileSystem(conf).open(path);
-        DataInputStream stream = baseStream;
+
+		FSDataInputStream baseStream = path.getFileSystem(conf).open(path);
+        InputStream stream = baseStream;
 
 		CompressionCodecFactory factory = new CompressionCodecFactory(conf);
         final CompressionCodec codec = factory.getCodec(path);

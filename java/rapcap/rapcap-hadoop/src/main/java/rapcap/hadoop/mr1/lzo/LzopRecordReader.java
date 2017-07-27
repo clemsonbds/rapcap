@@ -2,6 +2,7 @@ package rapcap.hadoop.mr1.lzo;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.hadoop.fs.Seekable;
 import org.apache.hadoop.io.BytesWritable;
@@ -21,9 +22,9 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 	long start, next_start;
 	public PublicLzopInputStream decompressor_stream;
 	
-	public LzopRecordReader(long start, long next_start, Seekable baseStream, DataInputStream stream, Reporter reporter) throws IOException {
+	public LzopRecordReader(long start, long next_start, Seekable baseStream, InputStream stream, Reporter reporter) throws IOException {
 		this.baseStream = baseStream;
-		this.stream = stream;
+		this.stream = new DataInputStream(stream);
 		this.start = start;
 		this.next_start = next_start;
 		this.reporter = reporter;
@@ -32,8 +33,12 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 		LzopDecompressor decompressor = new LzopDecompressor(buffer_size);
 		
 		baseStream.seek(0);
+		decompressor_stream.resetState();
+
 		decompressor_stream = new PublicLzopInputStream(stream, decompressor, buffer_size);
+
 		baseStream.seek(start);
+		decompressor_stream.resetState();
 	}
 
 	public void close() throws IOException {
@@ -66,7 +71,9 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 
 		long start_pos = getPos();
 		int decompressed_size = stream.readInt();
+
 		baseStream.seek(start_pos);
+		decompressor_stream.resetState();
 
 /*
 		if (decompressor_buffer == null

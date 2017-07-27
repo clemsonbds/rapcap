@@ -23,6 +23,8 @@ public class PcapRecordReader extends net.ripe.hadoop.pcap.io.reader.PcapRecordR
 		this.tstart = start_byte;
 		this.next_start = next_start;
 		ID = new Random().nextInt(99);
+
+		baseStream.seek(start_byte);
 	}
 
 	@Override

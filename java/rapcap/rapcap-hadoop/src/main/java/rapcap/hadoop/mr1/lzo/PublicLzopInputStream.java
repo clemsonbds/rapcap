@@ -11,10 +11,8 @@ import com.hadoop.compression.lzo.LzopInputStream;
 
 public class PublicLzopInputStream extends LzopInputStream {
 
-	public static Decompressor decompressor;
 	public PublicLzopInputStream(InputStream in, Decompressor decompressor, int bufferSize) throws IOException {
 		super(in, decompressor, bufferSize);
-		this.decompressor = decompressor;
 	}
 
 	@Override

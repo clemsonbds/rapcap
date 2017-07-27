@@ -1,8 +1,8 @@
 package rapcap.hadoop.mr1.pcap;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.hadoop.fs.Seekable;
 import org.apache.hadoop.io.LongWritable;
@@ -19,17 +19,24 @@ import rapcap.lib.pcap.PcapBoundaryDetector;
 public class PcapInputFormat extends RecordInputFormat<LongWritable, ObjectWritable> {
 
 	@Override
-	protected RecordBoundaryDetector createBoundaryDetector(DataInputStream stream) throws IOException {
-		return new PcapBoundaryDetector(new BufferedInputStream(stream));
+	protected RecordBoundaryDetector createBoundaryDetector(InputStream stream) throws IOException {
+		return new PcapBoundaryDetector(stream);
 	}
 
 	@Override
 	protected RecordReader<LongWritable, ObjectWritable> createRecordReader(long start, long end, Seekable baseStream,
-			DataInputStream stream, Reporter reporter) throws IOException {
+			InputStream stream, Reporter reporter) throws IOException {
+		DataInputStream dis = new DataInputStream(stream);
 		baseStream.seek(0);
-        PcapReader reader = new PcapReader(stream); // reads the first 24 bytes of the file, even remotely
-        baseStream.seek(start);
-        return new rapcap.hadoop.mr1.pcap.PcapRecordReader(reader, start, end, baseStream, stream, reporter);
+
+		return new PcapRecordReader(
+    		new PcapReader(dis), // reads the first 24 bytes of the file, even remotely
+    		start,
+    		end,
+    		baseStream,
+    		dis,
+    		reporter
+        );
 	}
 
 

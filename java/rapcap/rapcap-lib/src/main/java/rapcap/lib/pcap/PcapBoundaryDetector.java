@@ -1,8 +1,8 @@
 package rapcap.lib.pcap;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteOrder;
 
 import net.ripe.hadoop.pcap.PcapReader;
@@ -12,7 +12,7 @@ public class PcapBoundaryDetector extends RecordBoundaryDetector {
 	public long snaplen;
 	public ByteOrder byteorder;
 
-	public PcapBoundaryDetector(BufferedInputStream stream) throws IOException {
+	public PcapBoundaryDetector(InputStream stream) throws IOException {
 		PcapReader reader = new PcapReader(new DataInputStream(stream)); // reads the first 24 bytes of the file
 
     	try {
