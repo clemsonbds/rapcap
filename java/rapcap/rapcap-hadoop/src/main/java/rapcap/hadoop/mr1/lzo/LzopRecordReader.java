@@ -81,14 +81,16 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 		}
 */		
 		value.setCapacity(decompressed_size);
-		
+		long actual;
+
 		try {
-		decompressor_stream.decompress(value.getBytes(), 0, decompressed_size);
+		actual = decompressor_stream.decompress(value.getBytes(), 0, decompressed_size);
 		}
 		catch (Exception e) {
 			throw new IOException("start=" + start + ", pos=" + start_pos + ", size=" + decompressed_size + ", " + e.getMessage());
 		}
 
+		System.out.printf("rapcap: decompressing attempted=%d, actual=%d, bufferlen=%d bytes\n", decompressed_size, actual, value.getLength());
 		key.set(getPos());
 
 		reporter.setStatus("Read " + getPos() + " of " + next_start + " bytes");
