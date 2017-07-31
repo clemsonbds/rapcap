@@ -77,8 +77,8 @@ public class LzoWordCount extends Configured implements Tool {
 
 		job.setInputFormat(LzoFileInputFormat.class);
 
-		job.setOutputKeyClass(LongWritable.class);
-		job.setOutputValueClass(BytesWritable.class);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
 
 		job.setNumReduceTasks(1);
 		JobClient.runJob(job);
