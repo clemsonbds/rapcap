@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.InputFormat;
@@ -21,6 +23,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import com.hadoop.compression.lzo.LzoIndex;
 import com.hadoop.compression.lzo.LzoInputFormatCommon;
 
+import net.ripe.hadoop.pcap.io.PcapInputFormat;
 import rapcap.lib.RecordBoundaryDetector;
 import rapcap.lib.lzo.LzoBoundaryDetector;
 
@@ -34,6 +37,8 @@ import rapcap.lib.lzo.LzoBoundaryDetector;
  * behavior of this input format.
  */
 public class LzoTextInputFormat extends com.hadoop.mapreduce.LzoTextInputFormat {
+    public static final Log LOG = LogFactory.getLog(PcapInputFormat.class);
+
 	@Override
 	protected boolean isSplitable(JobContext context, Path filename) {
 		if (LzoInputFormatCommon.isLzoFile(filename.toString())) {
@@ -117,6 +122,7 @@ public class LzoTextInputFormat extends com.hadoop.mapreduce.LzoTextInputFormat 
 					next_start = split.getStart() + boundaryDetector.detect();
 				}
 
+				LOG.info("computed boundaries for " + path + "." +split_num+ " at [" + start + ", " + next_start + ")");
 				result.add(new FileSplit(path, start, next_start - 1, split.getLocations()));
 			}
 
