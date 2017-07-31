@@ -14,6 +14,8 @@ import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.util.LineReader;
 
+import com.hadoop.compression.lzo.LzoCodec;
+
 public class LzoLineRecordReader implements RecordReader<LongWritable, Text> {
   private CompressionCodecFactory codecFactory = null;
   private long start;
@@ -29,7 +31,8 @@ public class LzoLineRecordReader implements RecordReader<LongWritable, Text> {
 
     FileSystem fs = file.getFileSystem(conf);
     codecFactory = new CompressionCodecFactory(conf);
-    final CompressionCodec codec = codecFactory.getCodec(file);
+//    final CompressionCodec codec = codecFactory.getCodec(file);
+    CompressionCodec codec = new LzoCodec();
     if (codec == null) {
       throw new IOException("No LZO codec found, cannot run.");
     }
