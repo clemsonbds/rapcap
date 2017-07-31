@@ -129,7 +129,7 @@ public class LzoTextInputFormat extends TextInputFormat {
 			stream.close();
 		}
 
-		return (InputSplit[]) result.toArray();
+		return result.toArray(new InputSplit[result.size()]);
 	}
 
 	@Override
