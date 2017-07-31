@@ -46,7 +46,7 @@ public class LzoTextInputFormat extends TextInputFormat {
 	@Override
     protected boolean isSplitable(FileSystem fs, Path filename) {
 		if (LzoInputFormatCommon.isLzoFile(filename.toString())) {
-			return true;
+			return false;
 			//      LzoIndex index = indexes.get(filename);
 			//      return !index.isEmpty();
 		} else {
