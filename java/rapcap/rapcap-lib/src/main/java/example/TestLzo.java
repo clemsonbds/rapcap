@@ -3,14 +3,14 @@ package example;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import rapcap.lib.lzo.LzopBoundaryDetector;
+import rapcap.lib.lzo.LzoBoundaryDetector;
 
 public class TestLzo {
 
 	public static void main(String[] args) throws IOException {
 		FileInputStream fis = new FileInputStream(args[0]);
 
-		LzopBoundaryDetector detector = new LzopBoundaryDetector(fis);
+		LzoBoundaryDetector detector = new LzoBoundaryDetector(fis);
 		
 		long to_find = new Long(args[1]);
 		long to_skip = to_find - detector.globalHeaderLength;

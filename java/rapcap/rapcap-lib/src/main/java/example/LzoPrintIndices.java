@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import rapcap.lib.lzo.LzopBoundaryDetector;
+import rapcap.lib.lzo.LzoBoundaryDetector;
 
 public class LzoPrintIndices {
 
@@ -12,7 +12,7 @@ public class LzoPrintIndices {
 		
 		FileInputStream fis = new FileInputStream(args[0]);
 
-		LzopBoundaryDetector detector = new LzopBoundaryDetector(fis);
+		LzoBoundaryDetector detector = new LzoBoundaryDetector(fis);
 		long global_len = detector.globalHeaderLength;
 		long snap_len = detector.snaplen;
 		fis.close();

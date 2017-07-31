@@ -9,9 +9,9 @@ import com.hadoop.compression.lzo.LzopInputStream;
 
 // wrapper class for LzopInputStream because decompress is protected.
 
-public class PublicLzopInputStream extends LzopInputStream {
+public class PublicLzoInputStream extends LzopInputStream {
 
-	public PublicLzopInputStream(InputStream in, Decompressor decompressor, int bufferSize) throws IOException {
+	public PublicLzoInputStream(InputStream in, Decompressor decompressor, int bufferSize) throws IOException {
 		super(in, decompressor, bufferSize);
 	}
 

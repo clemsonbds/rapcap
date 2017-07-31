@@ -1,4 +1,4 @@
-package rapcap.hadoop.mr1.lzo;
+package util;
 
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;

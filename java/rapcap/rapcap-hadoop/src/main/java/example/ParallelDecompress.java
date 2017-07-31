@@ -19,8 +19,8 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import rapcap.hadoop.mr1.lzo.ByteOutputFormat;
-import rapcap.hadoop.mr1.lzo.LzoInputFormat;
+import rapcap.hadoop.mr1.lzo.LzoFileInputFormat;
+import util.ByteOutputFormat;
 
 
 public class ParallelDecompress extends Configured implements Tool{
@@ -56,7 +56,7 @@ public class ParallelDecompress extends Configured implements Tool{
 		job.setMapperClass(ParallelDecompressMapper.class);
 		job.setReducerClass(ParallelDecompressReducer.class);
 		
-		job.setInputFormat(LzoInputFormat.class);
+		job.setInputFormat(LzoFileInputFormat.class);
 
 		job.setOutputFormat(ByteOutputFormat.class);
 		job.setOutputKeyClass(LongWritable.class);

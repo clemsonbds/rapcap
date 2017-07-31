@@ -11,18 +11,18 @@ import org.apache.hadoop.mapred.Reporter;
 
 import rapcap.lib.RecordBoundaryDetector;
 import rapcap.hadoop.mr1.RecordInputFormat;
-import rapcap.lib.lzo.LzopBoundaryDetector;
+import rapcap.lib.lzo.LzoBoundaryDetector;
 
-public class LzoInputFormat extends RecordInputFormat<LongWritable, BytesWritable> {
+public class LzoFileInputFormat extends RecordInputFormat<LongWritable, BytesWritable> {
 	
 	@Override
 	protected RecordBoundaryDetector createBoundaryDetector(InputStream stream) throws IOException {
-		return new LzopBoundaryDetector(stream);
+		return new LzoBoundaryDetector(stream);
 	}
 
 	@Override
 	protected RecordReader<LongWritable, BytesWritable> createRecordReader(long start, long end, Seekable baseStream, 
 			InputStream stream, Reporter reporter) throws IOException { 
-		return new LzopRecordReader(start, end, baseStream, stream, reporter);
+		return new LzoRecordReader(start, end, baseStream, stream, reporter);
 	}
 }

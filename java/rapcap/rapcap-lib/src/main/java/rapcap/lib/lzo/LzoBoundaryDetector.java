@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import rapcap.lib.RecordBoundaryDetector;
 
-public class LzopBoundaryDetector extends RecordBoundaryDetector {
+public class LzoBoundaryDetector extends RecordBoundaryDetector {
 	public int snaplen;
 	public long globalHeaderLength;
 
@@ -47,7 +47,7 @@ public class LzopBoundaryDetector extends RecordBoundaryDetector {
 		}
 	}
 	
-	public LzopBoundaryDetector(InputStream stream) throws IOException {
+	public LzoBoundaryDetector(InputStream stream) throws IOException {
 		// reading the header will advance the stream to the first byte of the first compressed block header
 		readGlobalHeader(stream);
 

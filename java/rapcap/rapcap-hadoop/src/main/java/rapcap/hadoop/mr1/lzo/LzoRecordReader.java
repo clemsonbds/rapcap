@@ -13,16 +13,16 @@ import org.apache.hadoop.mapred.Reporter;
 import com.hadoop.compression.lzo.LzopCodec;
 import com.hadoop.compression.lzo.LzopDecompressor;
 
-public class LzopRecordReader implements RecordReader<LongWritable, BytesWritable> {
+public class LzoRecordReader implements RecordReader<LongWritable, BytesWritable> {
 	
 	Seekable baseStream;
 	DataInputStream stream;
 	Reporter reporter;
 
 	long start, next_start;
-	public PublicLzopInputStream decompressor_stream;
+	public PublicLzoInputStream decompressor_stream;
 	
-	public LzopRecordReader(long start, long next_start, Seekable baseStream, InputStream stream, Reporter reporter) throws IOException {
+	public LzoRecordReader(long start, long next_start, Seekable baseStream, InputStream stream, Reporter reporter) throws IOException {
 		this.baseStream = baseStream;
 		this.stream = new DataInputStream(stream);
 		this.start = start;
@@ -34,7 +34,7 @@ public class LzopRecordReader implements RecordReader<LongWritable, BytesWritabl
 		
 		baseStream.seek(0);
 
-		decompressor_stream = new PublicLzopInputStream(stream, decompressor, buffer_size);
+		decompressor_stream = new PublicLzoInputStream(stream, decompressor, buffer_size);
 
 		baseStream.seek(start);
 		decompressor_stream.resetState();
