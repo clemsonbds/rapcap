@@ -83,6 +83,8 @@ public class LzoTextInputFormat extends com.hadoop.mapreduce.LzoTextInputFormat 
 				result.add(genericSplit);
 		}
 
+		LOG.info("have " + result.size() + " splittable, " + unsplittable.size() + "unsplittable");
+		
 		for (Entry<Path, List<FileSplit>> entry : unsplittable.entrySet()) {
 			List<FileSplit> fileSplits = entry.getValue();
 			Path path = fileSplits.get(0).getPath();
