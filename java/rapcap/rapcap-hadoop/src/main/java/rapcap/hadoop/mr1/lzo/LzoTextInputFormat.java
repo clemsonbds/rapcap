@@ -15,10 +15,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapred.InputFormat;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.LineRecordReader;
+import org.apache.hadoop.mapred.RecordReader;
+import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.TextInputFormat;
 
 import com.hadoop.compression.lzo.LzoInputFormatCommon;
@@ -120,5 +125,16 @@ public class LzoTextInputFormat extends TextInputFormat {
 		}
 
 		return (InputSplit[]) result.toArray();
+	}
+
+	@Override
+	public RecordReader<LongWritable, Text> getRecordReader(InputSplit split, JobConf job, Reporter reporter) throws IOException {
+		FileSplit fileSplit = (FileSplit) split;
+		
+		if (LzoInputFormatCommon.isLzoFile(fileSplit.getPath().toString()))
+			return new LzoLineRecordReader(job, fileSplit);
+
+		// Delegate non-LZO files to the TextInputFormat base class.
+		return new LineRecordReader(job, fileSplit);
 	}
 }
