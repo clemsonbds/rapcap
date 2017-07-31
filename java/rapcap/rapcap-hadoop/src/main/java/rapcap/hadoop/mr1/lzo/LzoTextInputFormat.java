@@ -2,7 +2,6 @@ package rapcap.hadoop.mr1.lzo;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,13 +13,14 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.mapreduce.InputFormat;
-import org.apache.hadoop.mapreduce.InputSplit;
-import org.apache.hadoop.mapreduce.JobContext;
-import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapred.FileSplit;
+import org.apache.hadoop.mapred.InputFormat;
+import org.apache.hadoop.mapred.InputSplit;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.TextInputFormat;
 
-import com.hadoop.compression.lzo.LzoIndex;
 import com.hadoop.compression.lzo.LzoInputFormatCommon;
 
 import rapcap.lib.RecordBoundaryDetector;
@@ -35,36 +35,25 @@ import rapcap.lib.lzo.LzoBoundaryDetector;
  * <code>lzo.text.input.format.ignore.nonlzo</code> and how it affects the
  * behavior of this input format.
  */
-public class LzoTextInputFormat extends com.hadoop.mapreduce.LzoTextInputFormat {
+public class LzoTextInputFormat extends TextInputFormat {
     public static final Log LOG = LogFactory.getLog(LzoTextInputFormat.class);
 
 	@Override
-	protected boolean isSplitable(JobContext context, Path filename) {
+    protected boolean isSplitable(FileSystem fs, Path filename) {
 		if (LzoInputFormatCommon.isLzoFile(filename.toString())) {
 			return true;
 			//      LzoIndex index = indexes.get(filename);
 			//      return !index.isEmpty();
 		} else {
 			// Delegate non-LZO files to the TextInputFormat base class.
-			return super.isSplitable(context, filename);
+			return super.isSplitable(fs, filename);
 		}
 	}
 
 	@Override
-	public List<InputSplit> getSplits(JobContext job) throws IOException {
-		List<InputSplit> splits = super.getSplits(job);
+	public InputSplit[] getSplits(JobConf job, int numSplits) throws IOException {
+		InputSplit[] splits = super.getSplits(job, numSplits);
 		List<InputSplit> result = new ArrayList<InputSplit>();
-
-		Map<Path, LzoIndex> indexes = null;
-
-		try {
-			Class<?> clazz = getClass().getSuperclass();
-			Field field = clazz.getDeclaredField("indexes");
-			field.setAccessible(true);
-			indexes = (Map<Path, LzoIndex>) field.get(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 		Map<Path, List<FileSplit>> unsplittable = new HashMap<Path, List<FileSplit>>();
 
@@ -73,7 +62,7 @@ public class LzoTextInputFormat extends com.hadoop.mapreduce.LzoTextInputFormat 
 			FileSplit fileSplit = (FileSplit)genericSplit;
 			Path file = ((FileSplit)genericSplit).getPath();
 
-			if (indexes.get(file).isEmpty()) {
+			if (LzoInputFormatCommon.isLzoFile(file.toString())) {
 				if (!unsplittable.containsKey(file))
 					unsplittable.put(file, new ArrayList<FileSplit>());
 
@@ -96,7 +85,7 @@ public class LzoTextInputFormat extends com.hadoop.mapreduce.LzoTextInputFormat 
 				}
 			});
 
-			FSDataInputStream baseStream = path.getFileSystem(job.getConfiguration()).open(path);
+			FSDataInputStream baseStream = path.getFileSystem(job).open(path);
 			InputStream stream = baseStream;
 
 			baseStream.seek(0);
@@ -130,6 +119,6 @@ public class LzoTextInputFormat extends com.hadoop.mapreduce.LzoTextInputFormat 
 			stream.close();
 		}
 
-		return result;
+		return (InputSplit[]) result.toArray();
 	}
 }

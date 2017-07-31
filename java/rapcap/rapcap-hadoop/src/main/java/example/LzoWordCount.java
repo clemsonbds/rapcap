@@ -6,9 +6,7 @@ import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.FileOutputFormat;
@@ -22,7 +20,7 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import rapcap.hadoop.mr1.lzo.LzoFileInputFormat;
+import rapcap.hadoop.mr1.lzo.LzoTextInputFormat;
 
 public class LzoWordCount extends Configured implements Tool {
 
@@ -75,7 +73,7 @@ public class LzoWordCount extends Configured implements Tool {
 		job.setMapperClass(TokenizerMapper.class);
 		job.setReducerClass(IntSumReducer.class);
 
-		job.setInputFormat(LzoFileInputFormat.class);
+		job.setInputFormat(LzoTextInputFormat.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
