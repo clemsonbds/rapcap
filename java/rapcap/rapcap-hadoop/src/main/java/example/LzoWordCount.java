@@ -57,7 +57,7 @@ public class LzoWordCount extends Configured implements Tool {
 	}
 
 	public static void main(String[] args) throws Exception {
-		int res = ToolRunner.run(new JobConf(), new ParallelDecompress(), args);
+		int res = ToolRunner.run(new JobConf(), new LzoWordCount(), args);
 		System.exit(res);
 	}
 
