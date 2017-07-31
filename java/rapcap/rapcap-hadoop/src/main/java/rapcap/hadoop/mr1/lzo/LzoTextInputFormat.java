@@ -77,8 +77,10 @@ public class LzoTextInputFormat extends TextInputFormat {
 				result.add(genericSplit);
 		}
 
-		LOG.info("have " + result.size() + " splittable, " + unsplittable.size() + "unsplittable");
-		
+		String lstr = "rapcap: have " + result.size() + " splittable, " + unsplittable.size() + "unsplittable";
+		LOG.info(lstr);
+		System.out.println(lstr);
+				
 		for (Entry<Path, List<FileSplit>> entry : unsplittable.entrySet()) {
 			List<FileSplit> fileSplits = entry.getValue();
 			Path path = fileSplits.get(0).getPath();
@@ -117,7 +119,10 @@ public class LzoTextInputFormat extends TextInputFormat {
 					next_start = split.getStart() + boundaryDetector.detect();
 				}
 
-				LOG.info("computed boundaries for " + path + "." +split_num+ " at [" + start + ", " + next_start + ")");
+				lstr = "rapcap: computed boundaries for " + path + "." +split_num+ " at [" + start + ", " + next_start + ")";
+				LOG.info(lstr);
+				System.out.println(lstr);
+
 				result.add(new FileSplit(path, start, next_start - 1, split.getLocations()));
 			}
 
